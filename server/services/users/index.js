@@ -10,38 +10,46 @@ const getUsers = (req, res) => {
 }
 
 const getUserWithId = (req, res) => {
-  User.findById(req.params.user_id || 0, (err, user) => {
-    if (err) res.send(err)
+  User.findById(req.params.id || 0, (err, user) => {
+    if (err) res.status(404).send(err)
     res.status(200).json(user)
   })
 }
 
 const createUser = (req, res) => {
-  console.log('il a bien post')
-  const user = new User()
-  user.name = req.body.name
+  let user = new User({
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    email: req.body.email,
+    password: req.body.password
+  })
+
+  console.log(user)
 
   user.save((err) => {
     if (err) res.send(err)
-    res.status(200).json({ message: 'User created !' })
+    res.status(200).json(user)
   })
 }
 
 const updateUserWithId = (req, res) => {
-  User.findById(req.params.user_id, (err, user) => {
+  User.findById(req.params.id || 0, (err, user) => {
     if (err) res.send(err)
 
-    user.name = req.body.name
+    user.first_name = req.body.first_name || user.first_name
+    user.last_name = req.body.last_name || user.last_name
+    user.email = req.body.email || user.email
+    user.password = req.body.password || user.password
 
     user.save((err) => {
-      if (err) res.send(err)
-      res.status(200).json({ message: 'User updated!' })
+      if (err) res .send(err)
+      res.status(200).json(user)
     })
   })
 }
 
 const deleteUserWithId = (req, res) => {
-  User.remove({ _id: req.params.user_id }, (err, user) => {
+  User.remove({ _id: req.params.id || 0 }, (err, user) => {
     if (err) res.send(err)
     res.status(200).json({ message: 'User deleted' })
   })

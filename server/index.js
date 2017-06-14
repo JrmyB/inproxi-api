@@ -3,7 +3,11 @@
 const
     express = require ('express'),
     bodyParser = require('body-parser'),
-    mongoose = require('mongoose')
+    mongoose = require('mongoose'),
+    morgan = require('morgan'),
+    session = require('express-session'),
+    passport = require('passport'),
+    MongoStore = require('connect-mongo')(session)
 
 module.exports = function() {
   let server = express()
@@ -15,10 +19,25 @@ module.exports = function() {
     server.set('env', config.env)
     server.set('port', config.port)
     server.set('hostname', config.hostname)
-    server.set('dbName', config.dbName)
+    server.set('database', config.database)
 
-    // Middleware that parses json
+    // Middlewares
+    server.use(bodyParser.urlencoded({ extended: true }))
     server.use(bodyParser.json())
+
+    // server.use(session({
+    //   name: 'inproxi-cookie',
+    //   secret: 'ixi',
+    //   store: new MongoStore({ url: config.database }),
+    //   resave: false, // don't save session if unmodified
+    //   saveUninitialized: false // don't create session until something stored
+    // }))
+
+    // server.use(passport.initialize())
+    // server.use(passport.session())
+
+    if (config.env == 'dev')
+      server.use(morgan('dev'))
 
     // Set up routes
     routes.init(server)
@@ -27,10 +46,12 @@ module.exports = function() {
   const start = () => {
     let hostname = server.get('hostname')
     let port = server.get('port')
-    let dbName = server.get('dbName')
+    let database = server.get('database')
 
-    // TODO: Connection to database
-    mongoose.connect('mongodb://' + hostname + '/' + dbName)
+    // Connection to db
+    mongoose.connect(database, (err) => {
+      if (err) throw err;
+    })
 
     server.listen(port, () => {
       console.log('Magic happens on - http://' + hostname + ':' + port)
@@ -42,25 +63,3 @@ module.exports = function() {
     start: start
   }
 }
-
-// // Middleware
-// // errorhandler?
-// server.use(bodyParser.urlencoded({ extended: true }))
-// server.use(bodyParser.json())
-// server.use((req, res, next) => {
-//    const ip = req.headers['x-forwared-for'] || req.connection.remoteAddress
-//    console.log(req.method + ' from ' + ip)
-//   next()
-// })
-
-// // Route Middleware
-// routes.use((req, res, next) => {
-//   // logging here or in Middleware?
-//   next()
-// })
-
-// server.use('/api', routes)
-
-// server.listen(port, () => {
-//   console.log('Magic happens on port ' + port)
-// })

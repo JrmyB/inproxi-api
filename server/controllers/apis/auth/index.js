@@ -5,6 +5,6 @@ const
 
 let router = express.Router()
 
-router.post('/', authService.getToken)
+router.post('/', authService.authentication)
 
 module.exports = router

@@ -3,23 +3,23 @@
 const jwt = require('jsonwebtoken')
 const User = require('../../models/user')
 
-const getToken = (req, res) => {
+const authentication = (req, res) => {
   User.findOne({ email: req.body.email }, (err, user) => {
-    if (err) throw err
+    if (err) return res.status(404).send(err)
 
     if (!user)
-      res.status(401).json({ message: 'Authentication failed. Email not found.' })
-    else if (user.password != req.body.password)
-      res.status(401).json({ message: 'Authentication failed. Wrong password.'})
-    else {
-      const token = jwt.sign(user, 'secretPassPhrase', {
-        expiresIn: '1d'
-      })
+      return res.status(401).json({ message: 'Authentication failed. Email not found.' })
+    if (user.password != req.body.password)
+      return res.status(401).json({ message: 'Authentication failed. Wrong password.'})
 
-      res.status(200).json({
-        token: token
-      })
-    }
+    const token = jwt.sign(user, 'pssphrs', {
+      expiresIn: '1d'
+    })
+
+    res.status(200).json({
+      token: token
+    })
+
   })
 }
 
@@ -27,11 +27,17 @@ const checkToken = (req, res, next) => {
   const token = req.body.token || req.query.token || req.headers['x-access-token']
 
   if (!token)
-    return res.status(403).send({ message: 'No token provided.' })
+    return res.status(401).send({
+      status: 'Unauthorized',
+      message: 'No token provided.'
+    })
   else {
-    jwt.verify(token, 'secretPassPhrase', (err, decoded) => {
+    jwt.verify(token, 'pssphrs', (err, decoded) => {
       if (err)
-        return res.json({ message: 'Failed to authenticate token.'})
+        return res.status(401).json({
+          status: 'Unauthorized',
+          message: 'Invalid token.'
+        })
       else {
         req.decoded = decoded
         next()
@@ -41,6 +47,6 @@ const checkToken = (req, res, next) => {
 }
 
 module.exports = {
-  getToken : getToken,
+  authentication : authentication,
   checkToken : checkToken
 }

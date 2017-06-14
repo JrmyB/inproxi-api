@@ -9,8 +9,6 @@ const
 let router = express.Router()
 
 router.use('/auth', authController)
-
-router.use(authService.checkToken)
 router.use('/users', usersController)
 
 module.exports = router

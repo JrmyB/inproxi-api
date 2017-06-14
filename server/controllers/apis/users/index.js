@@ -2,17 +2,18 @@
 
 const
     express = require('express'),
-    userService = require('../../../services/users')
+    userService = require('../../../services/users'),
+    authService = require('../../../services/auth')
 
 let router = express.Router()
 
-router.get('/', userService.getUsers)
-router.get('/:id', userService.getUserWithId)
-
 router.post('/', userService.createUser)
 
-router.put('/:id', userService.updateUserWithId)
+router.use(authService.checkToken) // token required for next routes
 
+router.get('/', userService.getUsers)
+router.get('/:id', userService.getUserWithId)
+router.put('/:id', userService.updateUserWithId)
 router.delete('/:id', userService.deleteUserWithId)
 
 module.exports = router

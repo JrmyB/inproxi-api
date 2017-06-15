@@ -1,11 +1,10 @@
-'use strict'
 
 const
     express = require('express'),
-    v1ApiController = require('./v1')
+    authService = require('../services/auth')
 
 let router = express.Router()
 
-router.use('/v1', v1ApiController)
+router.post('/', authService.authentication)
 
 module.exports = router

@@ -2,9 +2,9 @@
 
 const
     express = require('express'),
-    authController = require('../../../controllers/apis/auth'),
-    usersController = require('../../../controllers/apis/users'),
-    authService = require('../../../services/auth')
+    authController = require('../controllers/auth'),
+    usersController = require('../controllers/users'),
+    authService = require('../services/auth')
 
 let router = express.Router()
 

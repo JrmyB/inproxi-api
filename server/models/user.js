@@ -1,6 +1,7 @@
 'use strict'
 
 const mongoose = require('mongoose')
+const bcrypt = require('../../lib/bcrypt')
 
 const UserSchema = new mongoose.Schema({
   first_name: {
@@ -26,8 +27,25 @@ const UserSchema = new mongoose.Schema({
   }
 })
 
-// UserSchema.pre('save', (next) => {
-//   //TODO: crypt pwd
-// })
+UserSchema.pre('save', function(next) {
+  const user = this
+
+  if (!user.isModified('password')) return next()
+
+  bcrypt.cryptPwd(user.password, (err, hash) => {
+    if (err) return next(err)
+    user.password = hash
+    next()
+  })
+})
+
+UserSchema.methods.comparePwd = function(candidatePwd, cb) {
+  const user = this
+
+  bcrypt.comparePwd(candidatePwd, user.password, (err, isPwdMatch) => {
+      if (err) return cb(err)
+      cb(null, isPwdMatch)
+  })
+}
 
 module.exports = mongoose.model('User', UserSchema)

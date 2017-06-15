@@ -2,8 +2,8 @@
 
 const
     express = require('express'),
-    userService = require('../../../services/users'),
-    authService = require('../../../services/auth')
+    userService = require('../services/users'),
+    authService = require('../services/auth')
 
 let router = express.Router()
 

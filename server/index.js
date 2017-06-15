@@ -25,17 +25,6 @@ module.exports = function() {
     server.use(bodyParser.urlencoded({ extended: true }))
     server.use(bodyParser.json())
 
-    // server.use(session({
-    //   name: 'inproxi-cookie',
-    //   secret: 'ixi',
-    //   store: new MongoStore({ url: config.database }),
-    //   resave: false, // don't save session if unmodified
-    //   saveUninitialized: false // don't create session until something stored
-    // }))
-
-    // server.use(passport.initialize())
-    // server.use(passport.session())
-
     if (config.env == 'dev')
       server.use(morgan('dev'))
 

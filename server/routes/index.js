@@ -1,15 +1,10 @@
 'use strict'
 
 const
-    apiRoute = require('./apis')
+    v1ApiController = require('./v1')
 
 const init = (server) => {
-  server.get('*', (req, res, next) => {
-  //  console.log('Request was made to: ' + req.originalUrl)
-    return next()
-  })
-
-  server.use('/api', apiRoute)
+  server.use('/v1', v1ApiController)
 }
 
 module.exports = { init: init }

@@ -11,43 +11,67 @@ const getUsers = (req, res) => {
 }
 
 const getUserWithId = (req, res) => {
-  User.findById(req.params.id || 0, (err, user) => {
-    if (err) return res.status(404).send(err)
-    res.status(200).json(user)
-  })
+    if (!req.params.id)
+	return res.status(422).json({ message: 'User ID required.'});
+
+    User.findById(req.params.id || 0, (err, user) => {
+	if (err) return res.status(404).send(err)
+	res.status(200).json(user)
+    })
 }
 
-const createUser = (req, res) => {
-  let user = new User({
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    email: req.body.email,
-    password: req.body.password
-  })
+// const getUserWithEmail = (req, res) => {
+//     if (!req.params.email)
+// 	return res.status(422).json({ message: 'User\'s email required.'})
+    
+//     User.findOne({ email: req.body.email }, (err, user) => {
+// 	if (err) return res.status(404).send(err);
+// 	res.status(200).json(user);
+//     });
+// }
 
-  user.save((err) => {
-    if (err) return res.status(500).json(err)
-    res.status(200).json(user)
-  })
+const createUser = (req, res) => {    
+    if (!req.body.first_name || !req.body.last_name
+	|| !req.body.email || !req.body.password)
+	return res.status(422).json({ message: 'Required field(s) missing.'})
+
+    let user = new User({
+	first_name: req.body.first_name,
+	last_name: req.body.last_name,
+	email: req.body.email,
+	password: req.body.password
+    })
+
+    user.save((err) => {
+	if (err.code === 11000) return res.status(409).json({ message: 'This email is taken. Try another.' });
+	if (err) return res.status(404).send({ message: 'Internal server error.' });
+		    
+	res.status(200).json({
+	    email: user.email,
+	    first_name: user.first_name,
+	    last_name: user.last_name,
+	    id: user.id
+	})
+    })
 }
 
 const updateUserWithId = (req, res) => {
   if (!req.body.password)
-    return res.status(404).json({ message: 'Password required.'})
+    return res.status(401).json({ message: 'Password required.'})
 
   User.findById(req.params.id || 0, (err, user) => {
-    if (err) return res.status(404).send(err)
+      if (err) return res.status(404).send({ message: 'Internal server error.' })
 
-    user.comparePwd(req.body.password || 0, (err, isMatch) => {
+    user.comparePwd(req.body.password, (err, isMatch) => {
       if (err) return res.status(404).send(err)
-      if (!isMatch) return res.status(404).send({ message: 'Passwords don\'t match.' })
+      if (!isMatch) return res.status(401).send({ message: 'Passwords don\'t match.' })
 
       user.first_name = req.body.first_name || user.first_name,
       user.last_name = req.body.last_name || user.last_name,
       user.email = req.body.email || user.email
 
       user.save((err) => {
-        if (err) return res.status(404).json({ message: 'Update failed.' })
+        if (err) return res.status(500).json({ message: 'Update failed.' })
         res.status(200).json(user)
       })
     })
@@ -55,10 +79,24 @@ const updateUserWithId = (req, res) => {
 }
 
 const deleteUserWithId = (req, res) => {
-  User.remove({ _id: req.params.id || 0 }, (err, user) => {
-    if (err) return res.send(err)
-    res.status(200).json({ message: 'User deleted' })
-  })
+    if (!req.body.password)
+	return res.status(401).json({ message: 'Password required.' });
+
+    User.findById(req.params.id || 0, (err, user) => {
+	if (err) return res.status(404).send({ message: 'Internal server error.' });
+	
+	user.comparePwd(req.body.password, (err, isMatch) => {
+	    if (err)
+		return res.status(404).send(err);
+	    if (!isMatch)
+		return res.status(401).send({ message: 'Passwords don\'t match.' });
+
+	    User.remove({ _id: req.params.id || 0 }, (err, user) => {
+		if (err) return res.status(500).send(err);
+		res.status(200).json({ message: 'User deleted' })
+	    });
+	});
+    });
 }
 
 module.exports = {

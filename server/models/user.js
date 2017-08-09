@@ -4,27 +4,31 @@ const mongoose = require('mongoose')
 const bcrypt = require('../../lib/bcrypt')
 
 const UserSchema = new mongoose.Schema({
-  first_name: {
-    type: String,
-    required: true
-  },
-  last_name: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  updated_at: {
-    type: Date,
-    default: Date.now
-  }
+    first_name: {
+	type: String,
+	required: true
+    },
+    last_name: {
+	type: String,
+	required: true
+    },
+    email: {
+	type: String,
+	required: true,
+	unique: true
+    },
+    password: {
+	type: String,
+	required: true
+    },
+    token: {
+	type: String,
+	required: false
+    },
+    updated_at: {
+	type: Date,
+	default: Date.now
+    }
 })
 
 UserSchema.pre('save', function(next) {
@@ -32,7 +36,7 @@ UserSchema.pre('save', function(next) {
 
   if (!user.isModified('password')) return next()
 
-  bcrypt.cryptPwd(user.password, (err, hash) => {
+  bcrypt.crypt(user.password, (err, hash) => {
     if (err) return next(err)
     user.password = hash
     next()
@@ -42,7 +46,7 @@ UserSchema.pre('save', function(next) {
 UserSchema.methods.comparePwd = function(candidatePwd, cb) {
   const user = this
 
-  bcrypt.comparePwd(candidatePwd, user.password, (err, isPwdMatch) => {
+  bcrypt.compare(candidatePwd, user.password, (err, isPwdMatch) => {
       if (err) return cb(err)
       cb(null, isPwdMatch)
   })

@@ -28,6 +28,10 @@ const UserSchema = new mongoose.Schema({
     updated_at: {
 	type: Date,
 	default: Date.now
+    },
+    friends: {
+	type: [mongoose.Schema.Types.ObjectId],
+	required: false
     }
 })
 

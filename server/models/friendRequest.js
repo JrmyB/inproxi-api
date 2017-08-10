@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 
 const FriendRequestSchema = new mongoose.Schema({
     from: {
-	type: Schema.ObjectId,
+	type: mongoose.Schema.Types.ObjectId,
 	required: true
     },
     to: {
-	type: Schema.ObjectId
+	type: mongoose.Schema.Types.ObjectId,
 	required: true
     },
     message: {
@@ -16,4 +16,4 @@ const FriendRequestSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('FriendRequest');
+module.exports = mongoose.model('FriendRequest', FriendRequestSchema);

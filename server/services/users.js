@@ -101,24 +101,11 @@ const deleteUserWithId = (req, res) => {
 }
 
 const getFriendRequests = (req, res) => {
-    console.log(req.params)
-    console.log(req.params.outgoing)
-
-    if (req.query.outgoing)
-	console.log('OUTGOING')
-    else
-	console.log('NORMAL')
-
-    
     const frType = req.query.outgoing
 	  ? { from: req.params.id }
 	  : { to: req.params.id };
 
-    console.log('frType: ' + JSON.stringify(frType));
-
     FriendRequest.find(frType, (err, frs) => {
-	console.log('frs: '+ frs);
-
 	if (err)
 	    return res.status(500).send({ message: 'Internal server error.' })
 	res.status(200).json(frs)

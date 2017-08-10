@@ -26,7 +26,6 @@ function update(req, res) {
 	return res.status(422).json({ message: 'Status field missing.' });
     
     if (req.body.status === 'accept') {
-	// TODO: Add friendship to each user.
 	// PUSH NOTIF TO ALL CLIENTS
 	
 	FriendRequest.findById(req.params.id, (err, fr) => {

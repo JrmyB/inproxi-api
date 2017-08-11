@@ -1,19 +1,34 @@
 'use strict'
 
-const
-    express = require('express'),
-    userService = require('../services/users'),
-    authService = require('../services/auth')
+const express = require('express');
+const userService = require('../services/users');
+const authService = require('../services/auth');
 
-let router = express.Router()
+let router = express.Router();
 
-router.post('/', userService.createUser)
+// Create an user account
+router.post('/', userService.createUser);
 
-router.use(authService.checkToken) // token required for next routes
+// AUTH CHECKING FOR ALL NEXT ROUTES
+router.use(authService.checkToken);
 
-router.get('/', userService.getUsers)
-router.get('/:id', userService.getUserWithId)
-router.put('/:id', userService.updateUserWithId)
-router.delete('/:id', userService.deleteUserWithId)
+// Retrieve all users
+// router.get('/', userService.getUsers);
 
-module.exports = router
+// Retrieve a specific user by ID
+router.get('/:id', userService.getUserWithId);
+
+// Update a specific user by ID
+router.put('/:id', userService.updateUserWithId);
+
+// Delete an user account by ID
+router.delete('/:id', userService.deleteUserWithId);
+
+// Retrieve friend requests (incoming or outgoing)
+// incoming: no params
+// outgoing: params -> ?outgoing=1
+router.get('/:id/friendrequests', userService.getFriendRequests);
+
+router.get('/:id/friends', userService.getFriendsWithId);
+
+module.exports = router;

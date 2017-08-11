@@ -13,7 +13,7 @@ router.post('/', userService.createUser);
 router.use(authService.checkToken);
 
 // Retrieve all users
-router.get('/', userService.getUsers);
+// router.get('/', userService.getUsers);
 
 // Retrieve a specific user by ID
 router.get('/:id', userService.getUserWithId);
@@ -28,5 +28,7 @@ router.delete('/:id', userService.deleteUserWithId);
 // incoming: no params
 // outgoing: params -> ?outgoing=1
 router.get('/:id/friendrequests', userService.getFriendRequests);
+
+router.get('/:id/friends', userService.getFriendsWithId);
 
 module.exports = router;

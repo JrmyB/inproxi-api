@@ -15,11 +15,42 @@ const getUserWithId = (req, res) => {
     if (!req.params.id)
 	return res.status(422).json({ message: 'User ID required.'});
 
-    User.findById(req.params.id || 0, (err, user) => {
-	if (err) return res.status(404).send(err)
+    User.findById(req.params.id, (err, user) => {
+	if (err) return res.status(500).send({ message: 'Internal server error.' });
+	if (user === null) return res.status(404).send();
+
 	res.status(200).json(user)
     })
 }
+
+const getFriendsWithId = (req, res) => {
+    if (!req.params.id)
+	return res.status(422).json({ message: 'User ID required.'});
+
+    User.findById(req.params.id, (err, user) => {
+	if (err) return res.status(500).send({ message: 'Internal server error.' });
+	if (user === null) return res.status(404).send();
+
+	var friends = [];
+	
+	user.friends.forEach((user_id, index, array) => {
+	    User.findById(user_id, (err, f) => {
+		if (err) return res.status(500).send({ message: 'Internal server error.' });
+
+		friends.push({
+		    _id: f._id,
+		    first_name: f.first_name,
+		    last_name: f.last_name,
+		});
+
+		if (index === user.friends.length - 1) {
+		    res.status(200).send(friends);  
+		}
+	    });	    
+	});
+    });
+};
+
 
 // const getUserWithEmail = (req, res) => {
 //     if (!req.params.email)
@@ -119,5 +150,6 @@ module.exports = {
     createUser : createUser,
     updateUserWithId : updateUserWithId,
     deleteUserWithId : deleteUserWithId,
-    getFriendRequests: getFriendRequests 
+    getFriendRequests: getFriendRequests, 
+    getFriendsWithId: getFriendsWithId
 }

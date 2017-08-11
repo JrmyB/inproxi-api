@@ -40,7 +40,7 @@ const getFriendsWithId = (req, res) => {
 		friends.push({
 		    _id: f._id,
 		    first_name: f.first_name,
-		    last_name: f.last_name,
+		    last_name: f.last_name
 		});
 
 		if (index === user.friends.length - 1) {

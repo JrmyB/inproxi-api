@@ -75,8 +75,8 @@ const createUser = (req, res) => {
     })
 
     user.save((err) => {
-	if (err.code === 11000) return res.status(409).json({ message: 'This email is taken. Try another.' });
-	if (err) return res.status(500).send({ message: 'Internal server error.' });
+	if (err && err.code === 11000) return res.status(409).json({ message: 'This email is taken. Try another.' });
+	else if (err) return res.status(500).send({ message: 'Internal server error.' });
 		    
 	res.status(200).json({
 	    email: user.email,

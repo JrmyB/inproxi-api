@@ -28,7 +28,7 @@ const authentication = (req, res) => {
 	    user.save(err => {
 		if (err)
 		    return res.status(500).send({ message: 'Internal Server Error.'})
-		res.status(200).json({ token: user.token })		    
+		res.status(200).json({ user_id: user._id, token: user.token })  
 	    })
 	});
     });

@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const express = require('express');
 const userService = require('../services/users');
@@ -21,7 +21,7 @@ router.get('/:id', userService.getUserWithId);
 // Update a specific user by ID
 router.put('/:id', userService.updateUserWithId);
 
-// Delete an user account by ID
+// Delete an user  by ID
 router.delete('/:id', userService.deleteUserWithId);
 
 // Retrieve friend requests (incoming or outgoing)
@@ -29,6 +29,7 @@ router.delete('/:id', userService.deleteUserWithId);
 // outgoing: params -> ?outgoing=1
 router.get('/:id/friendrequests', userService.getFriendRequests);
 
+// Retrieve all user's friends
 router.get('/:id/friends', userService.getFriendsWithId);
 
 module.exports = router;

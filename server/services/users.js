@@ -3,14 +3,6 @@
 const User = require('../models/user')
 const FriendRequest = require('../models/friendRequest');
 
-const getUsers = (req, res) => {
-    User.find((err, users) => {
-      if (err)
-	  return res.status(500).send({ message: 'Internal server error.' })
-      res.status(200).json(users)
-  })
-}
-
 const getUserWithId = (req, res) => {
     if (!req.params.id)
 	return res.status(422).json({ message: 'User ID required.'});

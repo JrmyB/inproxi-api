@@ -26,7 +26,7 @@ function update(req, res) {
 	return res.status(422).json({ message: 'Status field missing.' });
     
     if (req.body.status === 'accept') {
-	// PUSH NOTIF TO ALL CLIENTS
+	// PUSH NOTIF TO ALL CLIENTS?
 	
 	FriendRequest.findById(req.params.id, (err, fr) => {
 	    if (err) return res.status(404).send({ message: 'Internal server error.' });

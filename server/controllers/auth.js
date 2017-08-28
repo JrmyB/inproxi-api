@@ -1,10 +1,10 @@
+'use strict';
 
-const
-    express = require('express'),
-    authService = require('../services/auth')
+const express = require('express');
+const authService = require('../services/auth');
 
-let router = express.Router()
+let router = express.Router();
 
-router.post('/', authService.authentication)
+router.post('/', authService.authentication);
 
-module.exports = router
+module.exports = router;

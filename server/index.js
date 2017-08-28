@@ -1,30 +1,28 @@
-'use strict'
+'use strict';
 
-const
-express = require ('express'),
-bodyParser = require('body-parser'),
-mongoose = require('mongoose'),
-morgan = require('morgan'),
-session = require('express-session'),
-passport = require('passport'),
-MongoStore = require('connect-mongo')(session)
+const express = require ('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const morgan = require('morgan');
+const session = require('express-session');
+const passport = require('passport');
+const MongoStore = require('connect-mongo')(session);
 
 module.exports = function() {
-    let server = express()
+    let server = express();
 
     const create = (config) => {
-	let routes = require('./routes')
+	let routes = require('./routes');
 
 	// Settings
-	server.set('env', config.env)
-	server.set('port', config.port)
-	server.set('hostname', config.hostname)
-	server.set('database', config.database)
+	server.set('env', config.env);
+	server.set('port', config.port);
+	server.set('hostname', config.hostname);
+	server.set('database', config.database);
 
 	// Middlewares
 	server.use(bodyParser.urlencoded({ extended: true }))
 	server.use(bodyParser.json())
-
 	server.use(function(req, res, next) {
 	    res.header("Access-Control-Allow-Origin", "*");
 	    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

@@ -11,7 +11,12 @@ const getUser = (req, res) => {
     methods.getUserById(req.params.id, (err, user) => {
 	if (err) return res.status(500).send({ message: 'Internal server error.'});
 	if (user === null) return res.status(404).send({ message: 'User not found.' });
-	res.status(200).json(user);
+
+	res.status(200).json({
+	    id: user._id,
+	    first_name: user.first_name,
+	    last_name: user.last_name
+	});
     });
 }
 
@@ -21,7 +26,7 @@ const createUser = (req, res) => {
 	return res.status(422).json({ message: 'Required field(s) missing.'})
 
     methods.createUser(req.body, err => {
-	if (err.code === 11000) return res.status(409).json({ message: 'This email is taken. Try another.' });
+	if (err && err.code === 11000) return res.status(409).json({ message: 'This email is taken. Try another.' });
 	if (err) return res.status(500).send({ message: 'Internal server error.' });
 	res.status(200).json();
     });

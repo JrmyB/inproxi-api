@@ -21,14 +21,17 @@ const authentication = (req, res) => {
 	    let token = jwt.sign({ email: user.email }, configs.jwt.secret, { expiresIn: '1d' });
 	    userMethods.updateUser(user, { token: token }, err => {
 		if (err) return res.status(500).send({ message: 'Internal server error.'});
-		res.status(200).json({ token: token})
+		res.status(200).json({
+		    id: user._id,
+		    token: token
+		});
 	    });
 	});
     });
 }
 
 const checkToken = (req, res, next) => {
-    let token = req.headers['authorization'];
+    let token = req.headers['Authorization'];
 
     if (token === null)
 	return res.status(401).send({ message: 'No token provided.' });

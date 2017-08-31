@@ -23,16 +23,23 @@ module.exports = function() {
 	// Middlewares
 	server.use(bodyParser.urlencoded({ extended: true }))
 	server.use(bodyParser.json())
-	server.use(function(req, res, next) {
-	    res.header("Access-Control-Allow-Origin", "*");
-	    res.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
-	    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-	    next();
-	});
 
+	let allowCrossDomain = (req, res, next) => {
+	    res.header("Access-Control-Allow-Origin", "*");
+	    res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
+	    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+	    req.method === 'OPTIONS'
+		? res.send(200)
+		: next();
+	};
+
+	server.use(allowCrossDomain);
+
+	// Logger
 	if (config.env == 'dev')
 	    server.use(morgan('dev'))
-
+	
 	// Set up routes
 	routes.init(server)
     }

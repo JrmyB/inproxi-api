@@ -31,7 +31,7 @@ const authentication = (req, res) => {
 }
 
 const checkToken = (req, res, next) => {
-    let token = req.headers['Authorization'];
+    let token = req.headers['authorization'];
 
     if (token === null)
 	return res.status(401).send({ message: 'No token provided.' });

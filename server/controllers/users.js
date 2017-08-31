@@ -19,6 +19,6 @@ router.get('/:id/friends', userService.getFriends);
 // Retrieve friend requests (incoming or outgoing)
 // incoming: no params
 // outgoing: params -> ?outgoing=1
-// router.get('/:id/friendrequests', userService.getFriendRequests);
+router.get('/:id/friendrequests', userService.getFriendRequests);
 
 module.exports = router;

@@ -22,7 +22,7 @@ const authentication = (req, res) => {
 	    userMethods.updateUser(user, { token: token }, err => {
 		if (err) return res.status(500).send({ message: 'Internal server error.'});
 		res.status(200).json({
-		    id: user._id,
+		    user_id: user._id,
 		    token: token
 		});
 	    });

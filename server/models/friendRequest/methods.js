@@ -16,9 +16,9 @@ function addFriendRequest(toId, fromId, msg, cb) {
 	message: msg || ''
     });
 
-    friendRequest.save(err => {
-	if (err) return cb(err);
-	cb(null);
+    friendRequest.save((err, fr) => {
+	if (err) return cb(err, null);
+	cb(null, fr);
     });
 };
 
@@ -60,8 +60,18 @@ function getFriendRequests(outgoing, userId, cb) {
 	? { from: userId }
 	: { to: userId }
     
-    FriendRequest.find(type, (err, frs) => {
+    FriendRequest.find(type, (err, friendRequests) => {
     	if (err) return cb(err, null);
+
+	let frs = friendRequests.map(e => {
+	    return {
+		id: e._id,
+		from: e.from,
+		to: e.to,
+		message: e.message
+	    }
+	});
+	
 	cb(null, frs);
     })
 };

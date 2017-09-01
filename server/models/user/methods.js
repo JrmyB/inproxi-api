@@ -24,9 +24,9 @@ function createUser(data, cb) {
 	password: data.password
     });
 
-    user.save(err => {
-	if (err) return cb(err);
-	cb(null);
+    user.save((err) => {
+	if (err) return cb(err, null);
+	cb(null, user);
     });
 };
 
@@ -37,8 +37,8 @@ function updateUser(user, data, cb) {
     user.token = data.token || user.token;
     
     user.save(err => {
-	if (err) return cb(err);
-	cb(null);
+	if (err) return cb(err, null);
+	cb(null, user);
     });
 };
 

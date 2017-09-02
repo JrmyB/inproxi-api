@@ -18,7 +18,7 @@ function add(req, res) {
 }
 
 function update(req, res) {
-    if (!req.body.status || !req.params.id)
+    if (!req.body.status)
 	return res.status(422).json({ message: 'Required field(s) missing.'})
 
     methods.getFriendRequestById(req.params.id, (err, fr) => {

@@ -1,6 +1,7 @@
 'use strict';
 
 const FriendRequest = require('./');
+const User = require('../user/');
 
 function getFriendRequestById(id, cb) {
     FriendRequest.findById(id, (err, fr) => {

@@ -24,9 +24,27 @@ function createUser(data, cb) {
 	password: data.password
     });
 
-    user.save((err) => {
+    user.save((err, user) => {
 	if (err) return cb(err, null);
 	cb(null, user);
+    });
+};
+
+function joinRoom(user, room, cb) {
+    user.rooms.push(room._id);
+
+    user.save(err => {
+	if (err) return cb(err);
+	cb(null);
+    });
+};
+
+function leaveRoom(user, room, cb) {
+    user.rooms = user.rooms.filter(e => !e.id.equals(room._id));
+    
+    user.save(err => {
+	if (err) return cb(err);
+	cb(null);
     });
 };
 
@@ -62,7 +80,7 @@ function getFriends(user, cb) {
 		last_name: f.last_name
 	    });
 	    
-	    if (i === user.friends.length -1)
+	    if (i === user.friends.length - 1)
 		return cb(null, friends);
 	});
     });
@@ -74,5 +92,7 @@ module.exports = {
     updateUser: updateUser,
     deleteUser: deleteUser,
     getFriends: getFriends,
-    getUserByEmail: getUserByEmail
+    getUserByEmail: getUserByEmail,
+    joinRoom: joinRoom,
+    leaveRoom: leaveRoom
 };

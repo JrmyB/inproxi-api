@@ -32,6 +32,10 @@ const UserSchema = new mongoose.Schema({
     friends: {
 	type: [mongoose.Schema.Types.ObjectId],
 	required: false
+    },
+    rooms: {
+	type: [mongoose.Schema.Types.ObjectId],
+	required: false
     }
 })
 

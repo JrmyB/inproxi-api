@@ -34,8 +34,8 @@ const start = () => {
     })
     
     socket.on('disconnect', () => delete clients[getKey(clients, socket.id)])
-    socket.on('join', data => socket.join(data.room_id))
-    socket.on('leave', data => socket.leave(data.room_id))
+    socket.on('join_room', data => socket.join(data.room_id))
+    socket.on('leave_room', data => socket.leave(data.room_id))
     socket.on('private_message', data =>
 	      io.sockets.connected[clients[data.to]].emit('private_message', data))
     socket.on('room_message', data => io.in(data.room_id).emit('room_message', data))

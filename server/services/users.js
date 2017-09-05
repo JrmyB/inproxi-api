@@ -56,10 +56,9 @@ const deleteUser = (req, res) => {
       if (err) return res.status(500).send({ message: 'Internal server error.'});
       if (!isMatch) return res.status(401).send({ message: 'Passwords don\'t match.' });
 
-      userMethods.deleteUser(user, err => {
-	if (err) return res.status(500).send({ message: 'Internal server error.' });
-	res.status(200).send();
-      });
+      userMethods.deleteUser(user, err => err
+			     ? res.status(500).send({ message: 'Internal server error.' })
+			     : res.sendStatus(200))
     });
   });
 }

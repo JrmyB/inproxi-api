@@ -12,21 +12,20 @@ function add(req, res) {
 }
 
 function update(req, res) {
-    if (!req.body.status)
-	return res.status(422).json({ message: 'Required field(s) missing.'})
+  if (!req.body.status)
+    return res.status(422).json({ message: 'Required field(s) missing.'})
 
-    methods.getFriendRequestById(req.params.id, (err, fr) => {
-	if (err) return res.status(500).send({ message: 'Internal server error.'});
-	if (fr === null) return res.status(404).send({ message: 'Friend request not found.' });
+  methods.getFriendRequestById(req.params.id, (err, fr) => {
+    if (err) return res.status(500).send({ message: 'Internal server error.'});
+    if (fr === null) return res.status(404).send({ message: 'Friend request not found.' });
 
-	methods.updateFriendRequest(fr, req.body.status, err => {
-	    if (err) return res.status(500).send({ message: 'Internal server error.'});
-	    res.status(200).send();
-	});
-    });
+    methods.updateFriendRequest(fr, req.body.status, err => err
+				? res.status(500).send({ message: 'Internal server error.'});
+				: res.sendStatus(200))
+  });
 }
 
 module.exports = {
-    add: add,
-    update: update
+  add: add,
+  update: update
 };

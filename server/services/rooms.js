@@ -4,18 +4,12 @@ const roomMethods = require('../models/room/methods');
 const userMethods = require('../models/user/methods');
 
 const createRoom = (req, res) => {
-    if (!req.body.name || !req.body.owner)
-	return res.status(422).json({ message: 'Required field(s) missing.'})
+  if (!req.body.name || !req.body.owner)
+    return res.status(422).json({ message: 'Required field(s) missing.'})
 
-    roomMethods.createRoom(req.body, (err, room) => {
-	if (err) return res.status(500).send({ message: 'Internal server error.' });
-
-	res.status(200).send({
-	    _id: room._id,
-	    name: room.name,
-	    members: room.members
-	});
-    });
+  roomMethods.createRoom(req.body, (err, room) => err
+			 ? res.status(500).send({ message: 'Internal server error.' })
+			 : res.status(200).send(room))
 };
 
 const getRoom = (req, res) => {

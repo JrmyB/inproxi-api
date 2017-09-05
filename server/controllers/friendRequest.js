@@ -9,10 +9,7 @@ let router = express.Router();
 // AUTH CHECKING FOR ALL NEXT ROUTES
 router.use(authService.checkToken);
 
-// Add a friend request
 router.post('/', friendRequestService.add);
-
-// Update a friend request (status: accept | remove (cancel or decline))
-router.put('/:id', friendRequestService.update)
+router.put('/:id', friendRequestService.update) // Status: accept | remove (cancel or decline)
 
 module.exports = router;

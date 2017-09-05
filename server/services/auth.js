@@ -9,7 +9,7 @@ const bcrypt = require('../../lib/bcrypt');
 const authentication = (req, res) => {
   if (!req.body.email || !req.body.password)
     return res.status(422).json({ message: 'Required field(s) missing.'})
-
+  
   userMethods.getUserByEmail(req.body.email, (err, user) => {
     if (err) return res.status(500).send({ message: 'Internal server error.'});
     if (user === null) return res.status(404).send({ message: 'User not found.' });

@@ -1,6 +1,28 @@
 'use strict';
 
+const userModel = require('./')
 const User = require('./');
+
+function searchUser(first_name, last_name, cb) {
+  const query = User
+      .find()
+      .or([
+	{ $and: [
+	  { 'first_name': {'$regex': `^${first_name}`, '$options': 'i'}},
+	  { 'last_name': {'$regex': `^${last_name}`, '$options': 'i'}}
+	]},
+	{ $and: [
+	  { 'first_name': {'$regex': `^${last_name}`, '$options': 'i'}},
+	  { 'last_name': {'$regex': `^${first_name}`, '$options': 'i'}}
+	]}
+      ])
+      .select('first_name last_name _id')
+      .limit(20)
+
+  query.exec((err, users) => err
+	     ? cb(err, null)
+	     : cb(null, users))
+}
 
 function getUserById(id, cb) {
   User.findById(id, (err, user) => {
@@ -77,5 +99,6 @@ module.exports = {
   updateUser: updateUser,
   deleteUser: deleteUser,
   getFriends: getFriends,
-  getUserByEmail: getUserByEmail
+  getUserByEmail: getUserByEmail,
+  searchUser: searchUser
 };

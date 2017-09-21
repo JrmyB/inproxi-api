@@ -39,7 +39,6 @@ const start = () => {
     socket.on('private_message', data =>
 	      io.sockets.connected[clients[data.to]].emit('private_message', data))
     socket.on('room_message', data => io.in(data.room_id).emit('room_message', data))
-    socket.on('group_message', data => io.in(data.group_id).emit('group_message', data))
   })
 }
 

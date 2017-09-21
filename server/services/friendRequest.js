@@ -21,7 +21,7 @@ function update(req, res) {
 
     methods.updateFriendRequest(fr, req.body.status, err => err
 				? res.status(500).send({ message: 'Internal server error.'})
-				: res.sendStatus(200))
+				: res.status(200).send('OK'))
   });
 }
 

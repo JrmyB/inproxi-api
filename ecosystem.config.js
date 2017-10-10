@@ -29,7 +29,7 @@ module.exports = {
       ref  : 'origin/master',
       repo : 'git@github.com:JrmyB/inproxi-api.git',
       path : '/var/www/inproxi-api-production',
-      'post-deploy' : 'exec zsh && npm install && pm2 reload ecosystem.config.js --env production',
+      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production',
       env  : {
 	NODE_ENV: 'production'
       }

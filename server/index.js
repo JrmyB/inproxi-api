@@ -58,8 +58,10 @@ module.exports = function() {
 
     // Start server
     server.listen(port, () => {
-      console.log('Magic happens on - http://' + hostname + ':' + port)
-
+      console.log('\x1b[31m', 'INPROXI API listening...');
+      console.log('\x1b[31m', 'PORT: ' + port + ', ENV: ' + process.env.NODE_ENV);
+      console.log('\x1b[0m');
+		  
       // Start chat
       io.start()
     })

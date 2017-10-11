@@ -6,15 +6,23 @@ module.exports = {
   apps : [
     // INPROXI API
     {
-      name      : 'inproxi-api',
-      script    : './index.js',
-      env: {
-        NODE_ENV: 'development'
-      },
-      env_production : {
-        NODE_ENV: 'production'
+      name: 'inproxi-api-prod',
+      script: './index.js',
+      'exec-mode': 'cluster',
+      instances: 2,
+      env_production: {
+	NODE_ENV: 'production'
       }
-    }
+    },
+    {
+      name: 'inproxi-api-dev',
+      script: './index.js',
+      'exec-mode': 'cluster',
+      instances: 2,
+      env_development: {
+	NODE_ENV: 'development'
+      }
+    }    
   ],
 
   /**
@@ -27,24 +35,18 @@ module.exports = {
       host : '51.15.165.55',
       key  : '~/.ssh/id_rsa',
       ref  : 'origin/master',
-      repo : 'git@github.com:JrmyB/inproxi-api.git',
+      repo : '-b master git@github.com:JrmyB/inproxi-api.git',
       path : '/var/www/inproxi-api-production',
-      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production',
-      env  : {
-	NODE_ENV: 'production'
-      }
+      'post-deploy' : 'source ~/.zshrc && npm install && pm2 reload ecosystem.config.js --only inproxi-api-prod --env production'
     },
     development : {
       user : 'jrmy',
       host : '51.15.165.55',
       key  : '~/.ssh/id_rsa',
-      ref  : 'origin/development',
-      repo : 'git@github.com:JrmyB/inproxi-api.git',
+      ref  : 'origin/development', 
+      repo : '-b development git@github.com:JrmyB/inproxi-api.git',
       path : '/var/www/inproxi-api-development',
-      'post-deploy' : 'exec zsh && npm install && pm2 reload ecosystem.config.js --env development',
-      env  : {
-        NODE_ENV: 'development'
-      }
+      'post-deploy' : 'source ~/.zshrc && npm install && pm2 reload ecosystem.config.js --only inproxi-api-dev --env development'
     }
   }
 };

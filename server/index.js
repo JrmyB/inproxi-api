@@ -36,8 +36,8 @@ module.exports = function() {
     app.use(allowCrossDomain);
 
     // Logger
-    if (config.env == 'dev')
-      app.use(morgan('dev'))
+    // if (config.env == 'development')
+    app.use(morgan('dev'))
     
     // Set up routes
     routes.init(app)
@@ -58,9 +58,8 @@ module.exports = function() {
 
     // Start server
     server.listen(port, () => {
-      console.log('\x1b[31m', 'INPROXI API listening...');
-      console.log('\x1b[31m', 'PORT: ' + port + ', ENV: ' + process.env.NODE_ENV);
-      console.log('\x1b[0m');
+      console.log('INPROXI API listening ... (PORT: ' + port
+		  + ', ENV: ' + process.env.NODE_ENV + ')');
 		  
       // Start chat
       io.start()

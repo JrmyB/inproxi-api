@@ -49,11 +49,6 @@ function updateFriendRequest(fr, status, cb) {
       cb(null);
     });
   }
-
-  deleteFriendRequest(fr, err => {
-    if (err) return cb(err);
-    cb(null);
-  });
 }
 
 function getFriendRequests(outgoing, userId, cb) {

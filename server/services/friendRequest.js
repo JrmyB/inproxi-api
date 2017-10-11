@@ -19,9 +19,13 @@ function update(req, res) {
     if (err) return res.status(500).send({ message: 'Internal server error.'});
     if (fr === null) return res.status(404).send({ message: 'Friend request not found.' });
 
-    methods.updateFriendRequest(fr, req.body.status, err => err
-				? res.status(500).send({ message: 'Internal server error.'})
-				: res.status(200).send('OK'))
+    methods.updateFriendRequest(fr, req.body.status, err => {
+      if (err) return res.status(500).send({ message: 'Internal server error.'});
+
+      methods.deleteFriendRequest(fr, err => err
+				  ? res.status(500).send({ message: 'Internal server error.' })
+				  : res.status(200).send('OK'))
+    });
   });
 }
 

@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const FriendRequestSchema = new mongoose.Schema({
   from: {
@@ -14,7 +14,7 @@ const FriendRequestSchema = new mongoose.Schema({
   message: {
     type: String
   }
-});
+})
 
 FriendRequestSchema.options.toJSON = {
   transform: (doc, ret) => {
@@ -23,7 +23,7 @@ FriendRequestSchema.options.toJSON = {
     delete ret.__v;
     return ret;
   }
-};
+}
 
-module.exports = mongoose.model('FriendRequest', FriendRequestSchema);
+module.exports = mongoose.model('FriendRequest', FriendRequestSchema)
 

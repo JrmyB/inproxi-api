@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const RoomSchema = new mongoose.Schema({
   name: {
@@ -11,7 +11,7 @@ const RoomSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true
   }
-});
+})
 
 RoomSchema.options.toJSON = {
   transform: (doc, ret) => {
@@ -20,6 +20,6 @@ RoomSchema.options.toJSON = {
     delete ret.__v;
     return ret;
   }
-};
+}
 
-module.exports = mongoose.model('Room', RoomSchema);
+module.exports = mongoose.model('Room', RoomSchema)

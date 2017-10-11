@@ -1,7 +1,9 @@
 'use strict'
 
-const server = require('./server')()
+const server = require('./server')
 const config = require('./configs')
 
-server.create(config)
-server.start()
+Promise.all([
+  server.create(config),
+  server.start()
+]).catch(err => { throw(err) })

@@ -6,69 +6,58 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const io = require('./io')
 
-module.exports = function() {
-  let app = express();
-  let server = require('http').Server(app)
+let app = express()
+let server = require('http').Server(app)
+
+const create = config => new Promise(resolve => {
+  const routes = require('./routes');
   
-  const create = (config) => {
-    let routes = require('./routes');
+  // Settings
+  app.set('env', config.env);
+  app.set('port', config.port);
+  app.set('hostname', config.hostname);
+  app.set('database', config.database);
+
+  // Middlewares
+  app.use(bodyParser.urlencoded({ extended: true }))
+  app.use(bodyParser.json())
+
+  const allowCrossDomain = (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE")
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+    req.method === 'OPTIONS'
+      ? res.sendStatus(200)
+      : next()
+  };
+
+  app.use(allowCrossDomain);
+  app.use(morgan('dev')) // Logger
+  routes.init(app)   // Set up routes
+  io.init(server) // Set up chat
+  resolve()
+})
+
+const start = () => new Promise((resolve, reject) => {
+  const hostname = app.get('hostname')
+  const port = app.get('port')
+  const database = app.get('database')
+
+  mongoose.connect(database, err => {
+    if (err) reject(err)
+  })
+
+  server.listen(port, () => {
+    console.log('INPROXI API (PORT: ' + port
+		+ ', ENV: ' + process.env.NODE_ENV + ') listening ...');
     
-    // Settings
-    app.set('env', config.env);
-    app.set('port', config.port);
-    app.set('hostname', config.hostname);
-    app.set('database', config.database);
+    io.start() // Start chat
+    resolve()
+  })
+})
 
-    // Middlewares
-    app.use(bodyParser.urlencoded({ extended: true }))
-    app.use(bodyParser.json())
-
-    let allowCrossDomain = (req, res, next) => {
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
-      res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-      req.method === 'OPTIONS'
-	? res.send(200)
-	: next();
-    };
-
-    app.use(allowCrossDomain);
-
-    // Logger
-    // if (config.env == 'development')
-    app.use(morgan('dev'))
-    
-    // Set up routes
-    routes.init(app)
-
-    // Set up chat
-    io.init(server)
-  }
-
-  const start = () => {
-    let hostname = app.get('hostname')
-    let port = app.get('port')
-    let database = app.get('database')
-
-    // Connection to db
-    mongoose.connect(database, (err) => {
-      if (err) throw err;
-    })
-
-    // Start server
-    server.listen(port, () => {
-      console.log('INPROXI API listening ... (PORT: ' + port
-		  + ', ENV: ' + process.env.NODE_ENV + ')');
-		  
-      // Start chat
-      io.start()
-    })
-
-  }
-
-  return {
-    create: create,
-    start: start
-  }
+module.exports = {
+  create: create,
+  start: start
 }

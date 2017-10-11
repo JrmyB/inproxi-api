@@ -8,7 +8,7 @@ module.exports = {
     {
       name: 'inproxi-api-prod',
       script: './index.js',
-      'exec-mode': 'cluster',
+      'exec_mode': 'cluster',
       env_production: {
 	NODE_ENV: 'production'
       }
@@ -16,7 +16,7 @@ module.exports = {
     {
       name: 'inproxi-api-dev',
       script: './index.js',
-      'exec-mode': 'cluster',
+      'exec_mode': 'cluster',
       env_development: {
 	NODE_ENV: 'development'
       }

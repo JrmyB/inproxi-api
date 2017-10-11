@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const userMethods = require('../models/user/methods');
 const configs = require('../../configs/');
 const _ = require('lodash');
-const bcrypt = require('../../lib/bcrypt');
 
 const authentication = (req, res) => {
   if (!req.body.email || !req.body.password)
@@ -13,17 +12,19 @@ const authentication = (req, res) => {
   userMethods.getUserByEmail(req.body.email, (err, user) => {
     if (err) return res.status(500).send({ message: 'Internal server error.'});
     if (user === null) return res.status(404).send({ message: 'User not found.' });
-    
-    user.comparePwd(req.body.password, (err, isMatch) => {
-      if (err) return res.status(500).send({ message: 'Internal server error.'});
-      if (!isMatch) return res.status(401).send({ message: 'Passwords don\'t match.' })
-      
-      let token = jwt.sign({ email: user.email }, configs.jwt.secret, { expiresIn: '1d' });
 
-      userMethods.updateUser(user, { token: token }, err => err
-			     ? res.status(500).send({ message: 'Internal server error.'})
-			     : res.status(200).json({ user_id: user._id, token: token }))
-    });
+    user.comparePwd(req.body.password)
+      .then(isMatch => {
+	if (!isMatch)
+	  return res.status(401).send({ message: 'Passwords don\'t match.' })
+	
+	let token = jwt.sign({ email: user.email }, configs.jwt.secret, { expiresIn: '1d' });
+
+	userMethods.updateUser(user, { token: token }, err => err
+			       ? res.status(500).send({ message: 'Internal server error.'})
+			       : res.status(200).json({ user_id: user._id, token: token }))
+      })
+      .catch(err => res.status(500).send({ message: 'Internal server error.'}))
   });
 }
 

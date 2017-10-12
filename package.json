@@ -11,15 +11,15 @@
   "author": "Jérémy Bel",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^1.0.2",
-    "body-parser": "^1.17.1",
-    "express": "^4.15.2",
-    "jsonwebtoken": "^7.4.1",
+    "bcrypt": "^1.0.3",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "jsonwebtoken": "^7.4.3",
     "lodash": "^4.17.4",
-    "mongoose": "^4.9.6",
+    "mongoose": "^4.12.1",
     "socket.io": "^2.0.3"
   },
   "devDependencies": {
-    "morgan": "^1.8.2"
+    "morgan": "^1.9.0"
   }
 }

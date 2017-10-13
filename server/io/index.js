@@ -20,7 +20,7 @@ const start = () => {
     socket.auth = false
 
     // Check user authorization
-    setTimeout(() => { if (!socket.auth) socket.disconnect(true) }, 1000);
+    setTimeout(() => { if (!socket.auth) socket.disconnect(true) }, 30000);
     
     socket.on('auth', data => {
       if (!data.token) socket.disconnect(true)

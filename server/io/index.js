@@ -23,7 +23,7 @@ const start = () => {
     setTimeout(() => { if (!socket.auth) socket.disconnect(true) }, 30000);
     
     socket.on('auth', data => {
-      console.log('Data: ' + data)
+      console.log('Data: ' + JSON.stringify(data))
 
       if (!data.token) {
 	console.log('Missing token.')

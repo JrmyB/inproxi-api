@@ -9,7 +9,7 @@ const getKey = (obj, value) => Object.keys(obj).find(key => obj[key] === value)
 
 const checkToken = token => new Promise((res, rej) => {
   jwt.verify(token, jwtSecret, err => err
-	     ? rej()
+	     ? rej(err)
 	     : res())
 })
 
@@ -23,14 +23,22 @@ const start = () => {
     setTimeout(() => { if (!socket.auth) socket.disconnect(true) }, 30000);
     
     socket.on('auth', data => {
-      if (!data.token) socket.disconnect(true)
+      console.log('Data: ' + data)
+
+      if (!data.token) {
+	console.log('Missing token.')
+	socket.disconnect(true)
+      }
       
       checkToken(data.token)
    	.then(() => {
    	  clients[data.user_id] = socket.id // Add socket.id to clients list
    	  socket.auth = true
 	})
-   	.catch(() => socket.disconnect(true))
+   	.catch(err => {
+	  console.log(err)
+	  socket.disconnect(true)
+	})
     })
     
     socket.on('disconnect', () => delete clients[getKey(clients, socket.id)])

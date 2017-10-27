@@ -50,9 +50,15 @@ const start = () => {
     socket.on('leave_room', data => socket.leave(data.room_id))
 
     socket.on('private_message', data => {
-      console.log(clients)
-      console.log('Private message data:' + JSON.stringify(data))
+      console.log('Connected clients: ' + clients)
+      
+      console.log('Private message: from ' + data.from
+		  + ', to ' + data.to + ', msg ' + data.message)
+      
       console.log('Sending message to:' + clients[data.to])
+      
+
+
       io.sockets.connected[clients[data.to]].emit('private_message', data)
     })
 

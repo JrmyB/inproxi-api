@@ -23,7 +23,7 @@ const start = () => {
     setTimeout(() => { if (!socket.auth) socket.disconnect(true) }, 30000);
     
     socket.on('auth', data => {
-      console.log('Data: ' + JSON.stringify(data))
+      console.log('User ' + data.user_id + ' connected with token ' + data.token)
 
       if (!data.token) {
 	console.log('Missing token.')
@@ -51,7 +51,6 @@ const start = () => {
 
     socket.on('private_message', data => {
       console.log(clients)
-      data = JSON.parse(data)
       console.log('Private message data:' + JSON.stringify(data))
       console.log('Sending message to:' + clients[data.to])
       io.sockets.connected[clients[data.to]].emit('private_message', data)

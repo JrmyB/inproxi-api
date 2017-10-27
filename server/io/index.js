@@ -41,12 +41,17 @@ const start = () => {
 	})
     })
     
-    socket.on('disconnect', () => delete clients[getKey(clients, socket.id)])
+    socket.on('disconnect', () => {
+      console.log('Client' + socket.id + ' disconnected.')
+      delete clients[getKey(clients, socket.id)]
+    })
+    
     socket.on('join_room', data => socket.join(data.room_id))
     socket.on('leave_room', data => socket.leave(data.room_id))
 
     socket.on('private_message', data => {
       console.log('Private message data:' + JSON.stringify(data))
+      console.log('Sending message to:' + clients[data.to])
       io.sockets.connected[clients[data.to]].emit('private_message', data)
     })
 

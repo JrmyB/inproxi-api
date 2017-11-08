@@ -2,6 +2,7 @@
 
 const userMethods = require('../models/user/methods');
 const frMethods = require('../models/friendRequest/methods');
+const convMethods = require('../models/conversation/methods')
 
 const getUser = (req, res) => {
   userMethods.getUserById(req.params.id)
@@ -89,11 +90,18 @@ const getFriendRequests = (req, res) => {
     .catch(err => res.status(500).send({ message: 'Internal server error.'}))
 }
 
+const getConversations = (req, res) => {
+  convMethods.getConversationsFromUserId(req.params.id)
+    .then(conversations => res.status(200).json(conversations))
+    .catch(err => res.status(500).send({ message: 'Internal server error' }))
+}
+
 module.exports = {
   getUser: getUser,
   createUser: createUser,
   updateUser: updateUser,
   deleteUser: deleteUser,
   getFriends: getFriends,
-  getFriendRequests: getFriendRequests
+  getFriendRequests: getFriendRequests,
+  getConversations: getConversations
 }

@@ -1,6 +1,5 @@
 'use strict';
 
-const userModel = require('./')
 const User = require('./');
 
 const searchUser = (firstName, lastName) => new Promise((resolve, reject) => {

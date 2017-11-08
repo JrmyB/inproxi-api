@@ -2,7 +2,7 @@
 
 let io = require('socket.io')
 const jwtSecret = require('../../configs/').jwt.secret
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
 
 const init = server => io = io(server)
 const getKey = (obj, value) => Object.keys(obj).find(key => obj[key] === value)
@@ -44,8 +44,18 @@ const start = () => {
     socket.on('disconnect', () => delete clients[getKey(clients, socket.id)])
     socket.on('join_room', data => socket.join(data.room_id))
     socket.on('leave_room', data => socket.leave(data.room_id))
-    socket.on('private_message', data =>
-	      io.sockets.connected[clients[data.to]].emit('private_message', data))
+
+    socket.on('private_message', data => {
+      console.log('Connected clients: ' + clients)
+      
+      console.log('Private message: from ' + data.from
+		  + ', to ' + data.to + ', msg ' + data.message)
+      
+      console.log('Sending message to:' + clients[data.to])
+
+      io.sockets.connected[clients[data.to]].emit('private_message', data)
+    })
+
     socket.on('room_message', data => io.in(data.room_id).emit('room_message', data))
   })
 }

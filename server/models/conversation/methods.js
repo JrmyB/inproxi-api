@@ -35,30 +35,26 @@ const getConversationsFromUserId = userId => new Promise((resolve, reject) => {
     .populate('members', 'first_name last_name')
     .exec()
     .then(conversations => {
-      // Get conversations + last messages
+
+      let fullConvs = []
+
+      // Get last messages
       conversations.forEach((conversation, i) => {
-      	Message.find({ 'conversation': conversation._id })
+	Message.find({ 'conversation': conversation._id })
           .sort('-createdAt')
           .limit(1)
           .exec()
       	  .then(msg => {
-	    conversation.last_message = msg[0].content
-	    console.log(conversation.last_message)
+	    let convWithMsg = {}
+	    convWithMsg.conversation = conversation
+	    if (msg) convWithMsg.last_message = msg[0].content
+	    fullConvs.push(convWithMsg)
 
-	    if (i === conversations.length - 1)
-
-	  //   if (msg) {
-	  //     conversation.last_message = msg[0].content
-	  //     return msg[0].content
-      	    //   }
-
-
-	    
-      	  })
+	    if (i == conversations.length - 1)
+	      resolve(fullConvs)
+  	  })
       	  .catch(err => reject(err))
       })
-
-//      resolve(conversations)
     })
     .catch(err => reject(err))
 })

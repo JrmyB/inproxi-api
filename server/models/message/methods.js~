@@ -1,0 +1,37 @@
+'use strict'
+
+const Message = require('./')
+
+const createMessage = data => new Promise((resolve, reject) => {
+  const message = new Message({
+    conversation: data.conversation_id,
+    content: data.message,
+    author: data.from
+  })
+
+  message.save()
+    .then(message => resolve(message))
+    .catch(err => reject(err))
+})
+
+module.exports = {
+  createMessage: createMessage
+}
+
+const getMessagesFromConversationId = conversationId => new Promise((resolve, reject) => {
+  Message.find({ conversation: conversationId })
+    .select('createdAt content author')
+    .sort('-createdAt')
+    .populate({
+      path: 'author',
+      select: 'user.first_name user.last_name'
+    })
+    .exec()
+    .then(msgs => resolve(msgs))
+    .catch(err => reject(err))
+})
+
+module.exports = {
+  createMessage: createMessage,
+  getMessagesFromConversationId
+}

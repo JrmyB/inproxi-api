@@ -2,7 +2,7 @@
 
 let io = require('socket.io')
 const jwtSecret = require('../../configs/').jwt.secret
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
 
 const init = server => io = io(server)
 const getKey = (obj, value) => Object.keys(obj).find(key => obj[key] === value)
@@ -56,8 +56,6 @@ const start = () => {
 		  + ', to ' + data.to + ', msg ' + data.message)
       
       console.log('Sending message to:' + clients[data.to])
-      
-
 
       io.sockets.connected[clients[data.to]].emit('private_message', data)
     })

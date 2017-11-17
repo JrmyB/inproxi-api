@@ -52,7 +52,7 @@ const start = () => new Promise((resolve, reject) => {
     console.log('INPROXI API (PORT: ' + port
 		+ ', ENV: ' + process.env.NODE_ENV + ') listening ...');
     
-  //  io.start() // Start chat
+    io.start() // Start chat
     resolve()
   })
 })

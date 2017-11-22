@@ -90,5 +90,6 @@ module.exports = {
   createConversation: createConversation,
   addMembers: addMembers,
   getConversationsFromUserId: getConversationsFromUserId,
-  getConversationById: getConversationById
+  getConversationById: getConversationById,
+  getConversations: getConversations
 }

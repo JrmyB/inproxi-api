@@ -7,9 +7,9 @@ const createConversation = (req, res) => {
   if (!req.body.members)
     return res.status(422).json({ message: 'Required member(s) id missing.'})
 
-  req.body.members.forEach(member => console.log(member))
+  const members = req.body.members.split(',')
   
-  convMethods.createConversation(req.body.members)
+  convMethods.createConversation(members)
     .then(conversation => res.status(200).json(conversation))
     .catch(err => res.status(500).send({ message: 'Internal server error.' }))
 }

@@ -3,8 +3,8 @@
 let io = require('socket.io')
 const jwtSecret = require('../../configs/').jwt.secret
 const jwt = require('jsonwebtoken')
-const convM = require('../models/conversation')
-const msgM = require('../models/message')
+const convM = require('../models/conversation/methods')
+const msgM = require('../models/message/methods')
 
 const init = server => io = io(server)
 const getKey = (obj, value) => Object.keys(obj).find(key => obj[key] === value)

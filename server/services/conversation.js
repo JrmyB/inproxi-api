@@ -7,7 +7,7 @@ const createConversation = (req, res) => {
   if (!req.body.members)
     return res.status(422).json({ message: 'Required member(s) id missing.'})
 
-  console.log(JSON.parse(req.body.members))
+  req.body.members.forEach(member => console.log(member))
   
   convMethods.createConversation(req.body.members)
     .then(conversation => res.status(200).json(conversation))

@@ -9,7 +9,7 @@ const createConversation = (req, res) => {
 
   console.log(req.body.members)
   
-  convMethods.createConversation(JSON.parse(req.body.members))
+  convMethods.createConversation(req.body.members)
     .then(conversation => res.status(200).json(conversation))
     .catch(err => res.status(500).send({ message: 'Internal server error.' }))
 }

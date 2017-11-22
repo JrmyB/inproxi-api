@@ -11,7 +11,10 @@ const createConversation = membersId => new Promise((resolve, reject) => {
   
   conversation.save()  
     .then(conversation => {
-      conversation.members.forEach(userId => Chat.joinGroup(userId, conversation._id))
+      conversation.members.forEach(userId => {
+	console.log(Chat)
+	Chat.joinGroup(userId, conversation._id)
+      })
       resolve(conversation)
     })
     .catch(err => {

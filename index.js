@@ -3,6 +3,8 @@
 const server = require('./server')
 const config = require('./configs')
 
+const Chat = require('./server/io')
+
 server.create(config)
   .then(server.start())
   .catch(err => { throw(err) })

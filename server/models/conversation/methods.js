@@ -5,6 +5,8 @@ const Message = require('../message/')
 const Chat = require('../../io/')
 
 const createConversation = membersId => new Promise((resolve, reject) => {
+  membersId = JSON.parse(membersId)
+
   const conversation = new Conversation({
     members: membersId
   })

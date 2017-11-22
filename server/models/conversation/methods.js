@@ -2,17 +2,19 @@
 
 const Conversation = require('./')
 const Message = require('../message/')
+const Chat = require('../../io/')
 
 const createConversation = membersId => new Promise((resolve, reject) => {
-  console.log(membersId)
-
   const conversation = new Conversation({
     members: membersId
   })
-
+  
   conversation.save()  
-    .then(conversation => resolve(conversation))
-    .reject(err => reject(err))
+    .then(conversation => {
+      conversation.members.forEach(userId => Chat.joinGroup(userId, conversation._id))
+      resolve(conversation)
+    })
+    .catch(err => reject(err))
 })
 
 const getConversationById = id => new Promise((resolve, reject) => {
@@ -25,8 +27,33 @@ const addMembers = (conversation, membersId) => new Promise((resolve, reject) =>
   conversation.members = conversation.members.concat(membersId)
 
   conversation.save()
-    .then(conversation => resolve(conversation))
-    .reject(err => reject(err))
+    .then(conversation => {
+      membersId.forEach(userId => Chat.joinGroup(userId, conversation.id))
+      resolve(conversation)
+    })
+    .catch(err => reject(err))
+})
+
+const deleteMember = (conversation, memberId) => new Promise((resolve, reject) => {
+  const conv = conversation.members.filter(e => e !== memberId)
+
+  conv.save()
+    .then(conversation => {
+      Chat.leaveGroup(memberId, conversation.id)
+      resolve(conversation)
+    })
+    .catch(err => reject(err))
+})
+
+const getConversations = userId => new Promise((resolve, reject) => {
+  Conversation
+    .find({ members: userId })
+    .select('-_id ')
+    .exec()
+    .then(conversations => {
+      resolve(conversations)
+    })
+    .catch(err => reject(err))
 })
 
 const getConversationsFromUserId = userId => new Promise((resolve, reject) => {

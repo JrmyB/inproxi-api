@@ -10,7 +10,7 @@ const createRoom = (req, res) => {
   roomMethods.createRoom(req.body, (err, room) => err
 			 ? res.status(500).send({ message: 'Internal server error.' })
 			 : res.status(200).send(room))
-};
+}
 
 const getRoom = (req, res) => {
   roomMethods.getRoomById(req.params.id, (err, room) => {
@@ -18,10 +18,10 @@ const getRoom = (req, res) => {
     if (room === null) return res.status(404).send({ message: 'Room not found.' });
     
     res.status(200).json(room);
-  });
-};
+  })
+}
 
 module.exports = {
     createRoom: createRoom,
     getRoom: getRoom
-};
+}

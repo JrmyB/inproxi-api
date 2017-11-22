@@ -3,6 +3,8 @@
 let io = require('socket.io')
 const jwtSecret = require('../../configs/').jwt.secret
 const jwt = require('jsonwebtoken')
+const convM = require('../models/conversation')
+const msgM = require('../models/message')
 
 const init = server => io = io(server)
 const getKey = (obj, value) => Object.keys(obj).find(key => obj[key] === value)
@@ -13,59 +15,96 @@ const checkToken = token => new Promise((res, rej) => {
 	     : res())
 })
 
-const start = () => {
-  let clients = {} // key: user_id, value: socket.id
+let clients = {} // key: user_id, value: socket.id
 
+const start = () => {
   io.on('connection', socket => {
+    console.log('RTM | Client connected (' + socket.id + ')')
     socket.auth = false
 
     // Check user authorization
-    setTimeout(() => { if (!socket.auth) socket.disconnect(true) }, 30000);
-    
-    socket.on('auth', data => {
-      console.log('User ' + data.user_id + ' connected with token ' + data.token)
+    setTimeout(() => { if (!socket.auth) socket.disconnect(true) }, 30000) 
 
+    const authentication = data => {
+      console.log('RTM | Authentication (' + socket.id + ')')
+      
       if (!data.token) {
-	console.log('Missing token.')
-	socket.disconnect(true)
+	console.log('RTM | Missing token (' + socket.id + ')')
+	disconnect();
       }
       
       checkToken(data.token)
-   	.then(() => {
-   	  clients[data.user_id] = socket.id // Add socket.id to clients list
-   	  socket.auth = true
+	.then(() => {
+	  console.log('RTM | Client authenticated (' + socket.id + ')')
+	  clients[data.user_id] = socket.id // Add socket.id to clients list
+	  socket.auth = true
+
+	  // Join all conversations
+	  convM.getConversations(userId)
+	    .then(groups => groups.forEach(g => socket.join(g._id))) // join all groups
+	    .catch(err => {
+	      console.log('RTM | ' + err)
+	      disconnect()
+	    })
 	})
-   	.catch(err => {
-	  console.log(err)
-	  socket.disconnect(true)
-	})
-    })
-    
-    socket.on('disconnect', () => {
-      console.log('Client' + socket.id + ' disconnected.')
+	.catch(err => {
+	  console.log('RTM | ' + err)
+	  disconnect()
+	})  
+    }
+
+    const disconnect = () => {
+      console.log('RTM | Client disconnected (' + socket.id + ')')
       delete clients[getKey(clients, socket.id)]
-    })
-    
-    socket.on('join_room', data => socket.join(data.room_id))
-    socket.on('leave_room', data => socket.leave(data.room_id))
+    }
 
-    socket.on('private_message', data => {
-      console.log('Connected clients: ' + clients)
-      
-      console.log('Private message: from ' + data.from
-		  + ', to ' + data.to + ', msg ' + data.message)
-      
-      console.log('Sending message to:' + clients[data.to])
+    const privateMsg = data => {
+      io.in(data.group_id).emit('group_message', data)
 
-      io.sockets.connected[clients[data.to]].emit('private_message', data)
-    })
+      msgM.createMessage({
+	conversation_id: data.group_id,
+	content: data.message,
+	author: data.from
+      }).catch(err => console.log('RTM | ' + err))
+    }
 
-    socket.on('room_message', data => io.in(data.room_id).emit('room_message', data))
+    socket.on('auth', authentication)
+    socket.on('disconnect', disconnect)
+    socket.on('private_message', privateMsg)
   })
+}
+
+const joinGroup = (userId, groupId) => {
+  if (clients[userId])
+    clients[userId].join(groupId)
+}
+
+const leaveGroup = (userId, groupId) => {
+  if (clients[userId])
+    clients[userId].leave(groupId)
 }
 
 module.exports = {
   init: init,
-  start: start
+  start: start,
+  joinGroup: joinGroup,
+  leaveGroup: leaveGroup
 }
+
+// socket.on('join_room', data => socket.join(data.room_id))
+// socket.on('leave_room', data => socket.leave(data.room_id))
+
+// socket.on('join_room', data => socket.join(data.room_id))
+// socket.on('leave_room', data => socket.leave(data.room_id))
+
+// socket.on('private_message', data => {
+//   console.log('Connected clients: ' + clients)
+
+//   console.log('Private message: from ' + data.from
+// 		  + ', to ' + data.to + ', msg ' + data.message)
+
+//   console.log('Sending message to:' + clients[data.to])
+
+//   io.sockets.connected[clients[data.to]].emit('private_message', data)
+// })
 

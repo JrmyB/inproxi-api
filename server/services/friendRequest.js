@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const methods = require('../models/friendRequest/methods');
 
@@ -35,4 +35,4 @@ const update = (req, res) => {
 module.exports = {
   add: add,
   update: update
-};
+}

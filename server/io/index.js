@@ -40,7 +40,7 @@ const start = () => {
 	  socket.auth = true
 
 	  // Join all conversations
-	  convM.getConversations(userId)
+	  convM.getConversations(data.user_id)
 	    .then(groups => groups.forEach(g => socket.join(g._id))) // join all groups
 	    .catch(err => {
 	      console.log('RTM | ' + err)

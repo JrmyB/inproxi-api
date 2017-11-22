@@ -2,7 +2,7 @@
 
 const Conversation = require('./')
 const Message = require('../message/')
-const Chat = require('../../io/')
+const Chat = require('../../io')
 
 const createConversation = membersId => new Promise((resolve, reject) => {
   const conversation = new Conversation({

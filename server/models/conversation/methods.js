@@ -14,7 +14,10 @@ const createConversation = membersId => new Promise((resolve, reject) => {
       conversation.members.forEach(userId => Chat.joinGroup(userId, conversation._id))
       resolve(conversation)
     })
-    .catch(err => reject(err))
+    .catch(err => {
+      console.log(err)
+      reject(err)
+    })
 })
 
 const getConversationById = id => new Promise((resolve, reject) => {

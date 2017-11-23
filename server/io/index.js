@@ -76,6 +76,8 @@ const start = () => {
 }
 
 const joinGroup = (userId, groupId) => {
+  console.log(clients[userId])
+
   if (clients[userId])
     clients[userId].join(groupId)
 }

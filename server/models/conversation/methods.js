@@ -1,8 +1,8 @@
 'use strict'
 
+const Chat = require('../../io/')
 const Conversation = require('./')
 const Message = require('../message/')
-const Chat = require('../../io')
 
 const createConversation = membersId => new Promise((resolve, reject) => {
   const conversation = new Conversation({
@@ -12,7 +12,6 @@ const createConversation = membersId => new Promise((resolve, reject) => {
   conversation.save()  
     .then(conversation => {
       conversation.members.forEach(userId => {
-	console.log(Chat)
 	Chat.joinGroup(userId, conversation._id)
       })
       resolve(conversation)

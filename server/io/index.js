@@ -3,8 +3,7 @@
 let io = require('socket.io')
 const jwtSecret = require('../../configs/').jwt.secret
 const jwt = require('jsonwebtoken')
-const convM = require('../models/conversation/methods')
-const msgM = require('../models/message/methods')
+const op = require('./operations')
 
 const init = server => io = io(server)
 const getKey = (obj, value) => Object.keys(obj).find(key => obj[key] === value)
@@ -39,9 +38,7 @@ const start = () => {
 	  clients[data.user_id] = socket.id // Add socket.id to clients list
 	  socket.auth = true
 
-	  // Join all conversations
-	  convM.getConversations(data.user_id)
-	    .then(groups => groups.forEach(g => socket.join(g._id))) // join all groups
+	  op.joinGroupsAfterAuth(data.user_id, socket)
 	    .catch(err => {
 	      console.log('RTM | ' + err)
 	      disconnect()

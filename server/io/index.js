@@ -81,7 +81,7 @@ const joinGroup = (userId, groupId) => {
   
   console.log(clients[userId])
 
-  if (clients[userId])
+  if (clients[userId] !== undefined)
     clients[userId].join(groupId)
 }
 

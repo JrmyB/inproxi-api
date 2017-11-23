@@ -79,15 +79,13 @@ const joinGroup = (userId, groupId) => {
   console.log('User ID: ' + userId)
   console.log('Group ID: ' + groupId)
   
-  console.log(clients[userId])
-
   if (clients[userId] !== undefined)
-    clients[userId].join(groupId)
+    io.sockets.connected[clients[userId]].join(groupId)
 }
 
 const leaveGroup = (userId, groupId) => {
-  if (clients[userId])
-    clients[userId].leave(groupId)
+  if (clients[userId] !== undefined)
+    io.sockets.connected[clients[userId]].leave(groupId)
 }
 
 module.exports = {

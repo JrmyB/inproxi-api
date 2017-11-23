@@ -2,7 +2,7 @@
 
 const Conversation = require('../models/conversation')
 
-const joinGroupsAfterAuth = (user_id, socket) => new Promise((resolve, reject) => {
+const joinGroupsAfterAuth = (userId, socket) => new Promise((resolve, reject) => {
   Conversation
     .find({ members: userId })
     .select('-_id ')

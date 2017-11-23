@@ -56,7 +56,7 @@ const start = () => {
     }
 
     const privateMsg = data => {
-      io.in(data.group_id).emit('group_message', data)
+      io.in(data.group_id).emit('private_message', data)
 
       msgM.createMessage({
 	conversation_id: data.group_id,

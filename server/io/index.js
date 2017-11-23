@@ -58,9 +58,6 @@ const start = () => {
 
     const privateMsg = data => {
       io.in(data.group_id).emit('private_message', data)
-
-      console.log('Data1:')
-      console.log(data)
       
       msgM.createMessage({
 	conversation_id: data.group_id,
@@ -69,16 +66,24 @@ const start = () => {
       }).catch(err => console.log('RTM | ' + err))
     }
 
+    const roomMsg = data => {
+      io.in('epitech_exp').emit('epitech_exp', data);
+    }
+    
+    const joinRoom = () => {
+      socket.join('epitech_exp')
+    }
+
     socket.on('auth', authentication)
     socket.on('disconnect', disconnect)
     socket.on('private_message', privateMsg)
+
+    socket.on('join_room', joinRoom)
+    socket.on('room_message', roomMsg)
   })
 }
 
 const joinGroup = (userId, groupId) => {
-  console.log('User ID: ' + userId)
-  console.log('Group ID: ' + groupId)
-  
   if (clients[userId] !== undefined)
     io.sockets.connected[clients[userId]].join(groupId)
 }

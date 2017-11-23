@@ -1,6 +1,6 @@
 'use strict'
 
-const Chat = require('../../io/')
+const Chat = require('../../io')
 const Conversation = require('./')
 const Message = require('../message/')
 

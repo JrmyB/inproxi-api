@@ -1,10 +1,12 @@
 'use strict'
 
-const convM = require('../models/conversation/methods')
-const msgM = require('../models/message/methods')
+const Conversation = require('../models/conversation')
 
 const joinGroupsAfterAuth = (user_id, socket) => new Promise((resolve, reject) => {
-  convM.getConversations(user_id)
+  Conversation
+    .find({ members: userId })
+    .select('-_id ')
+    .exec()
     .then(groups => {
       groups.forEach(g => socket.join(g._id))
       resolve()

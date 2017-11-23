@@ -3,6 +3,10 @@
 const Message = require('./')
 
 const createMessage = data => new Promise((resolve, reject) => {
+
+  console.log('Data2:')
+  console.log(data)
+
   const message = new Message({
     conversation: data.conversation_id,
     content: data.content,

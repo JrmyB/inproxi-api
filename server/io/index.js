@@ -77,7 +77,6 @@ const start = () => {
     socket.on('auth', authentication)
     socket.on('disconnect', disconnect)
     socket.on('private_message', privateMsg)
-
     socket.on('join_room', joinRoom)
     socket.on('room_message', roomMsg)
   })
@@ -102,18 +101,13 @@ module.exports = {
 
 // socket.on('join_room', data => socket.join(data.room_id))
 // socket.on('leave_room', data => socket.leave(data.room_id))
-
 // socket.on('join_room', data => socket.join(data.room_id))
 // socket.on('leave_room', data => socket.leave(data.room_id))
-
 // socket.on('private_message', data => {
 //   console.log('Connected clients: ' + clients)
-
 //   console.log('Private message: from ' + data.from
 // 		  + ', to ' + data.to + ', msg ' + data.message)
-
 //   console.log('Sending message to:' + clients[data.to])
-
 //   io.sockets.connected[clients[data.to]].emit('private_message', data)
 // })
 

@@ -33,7 +33,7 @@ const create = config => new Promise(resolve => {
   };
 
   app.use(allowCrossDomain);
-//  app.use(morgan('dev')) // Logger
+  app.use(morgan('dev')) // Logger
   routes.init(app)   // Set up routes
   io.init(server) // Set up chat
   resolve()

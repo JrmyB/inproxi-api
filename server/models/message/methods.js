@@ -3,15 +3,7 @@
 const Message = require('./')
 
 const createMessage = data => new Promise((resolve, reject) => {
-
-  console.log('Data2:')
-  console.log(data)
-
-  const message = new Message({
-    conversation: data.conversation_id,
-    content: data.content,
-    author: data.author
-  })
+  const message = new Message(data)
 
   message.save()
     .then(message => resolve(message))
@@ -22,7 +14,7 @@ const getMessagesFromConversationId = conversationId => new Promise((resolve, re
   Message.find({ conversation: conversationId })
     .select('createdAt content author')
     .sort('-createdAt')
-    .populate('author', 'first_name last_name')
+    .populate('author', 'first_name last_name _id')
     .exec()
     .then(msgs => resolve(msgs))
     .catch(err => reject(err))

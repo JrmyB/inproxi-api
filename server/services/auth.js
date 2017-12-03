@@ -5,6 +5,7 @@ const userMethods = require('../models/user/methods');
 const configs = require('../../configs/');
 const _ = require('lodash');
 const util = require('util')
+
 const jwtVerify = util.promisify(jwt.verify)
 
 const authentication = (req, res) => {
@@ -41,10 +42,6 @@ const checkToken = (req, res, next) => {
   jwtVerify(token, configs.jwt.secret)
     .then(() => next())
     .catch(err => res.status(401).json({ message: 'Invalid token.' }))
-  
-  // jwt.verify(token, configs.jwt.secret, err => err
-  // 	     ? 
-  // 	     : next())
 }
 
 module.exports = {

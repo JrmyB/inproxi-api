@@ -59,15 +59,12 @@ const start = () => {
     const privateMsg = data => {
       io.in(data.group_id).emit('private_message', data)
       
-      msgM.createMessage({
-	conversation_id: data.group_id,
-	content: data.message,
-	author: data.from
-      }).catch(err => console.log('RTM | ' + err))
+      msgM.createMessage(data)
+	.catch(err => console.log('RTM | ' + err))
     }
 
     const roomMsg = data => {
-      io.in('epitech_exp').emit('epitech_exp', data);
+      io.in('epitech_exp').emit('epitech_exp', data)
     }
     
     const joinRoom = () => {

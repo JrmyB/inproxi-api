@@ -4,9 +4,10 @@ const Chat = require('../../io')
 const Conversation = require('./')
 const Message = require('../message/')
 
-const createConversation = membersId => new Promise((resolve, reject) => {
+const createConversation = (membersId, name) => new Promise((resolve, reject) => {
   const conversation = new Conversation({
-    members: membersId
+    members: membersId,
+    name: name
   })
   
   conversation.save()  
@@ -53,7 +54,7 @@ const deleteMember = (conversation, memberId) => new Promise((resolve, reject) =
 const getConversations = userId => new Promise((resolve, reject) => {
   Conversation
     .find({ members: userId })
-    .select('-_id ')
+    .select('-_id name')
     .exec()
     .then(conversations => {
       resolve(conversations)
@@ -64,7 +65,7 @@ const getConversations = userId => new Promise((resolve, reject) => {
 const getConversationsFromUserId = userId => new Promise((resolve, reject) => {
   Conversation
     .find({ members: userId })
-    .populate('members', 'first_name last_name')
+    .populate('members', 'first_name last_name _id')
     .exec()
     .then(conversations => {
 

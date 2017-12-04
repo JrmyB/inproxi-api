@@ -14,6 +14,12 @@ const createConversation = (req, res) => {
     .catch(err => res.status(500).send({ message: 'Internal server error.' }))
 }
 
+const getConversation = (req, res) => {
+  convMethods.getConversationById(req.params.id)
+    .then(conversation => res.status(200).json(conversation))
+    .catch(err => res.status(500).send({ message: 'Internal server error.' }))
+}
+
 const addMembers = (req, res) => {
   if (!req.body.members)
     return res.status(422).json({ message: 'Required member(s) id missing.'})

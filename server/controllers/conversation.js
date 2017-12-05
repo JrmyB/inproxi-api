@@ -13,6 +13,5 @@ router.post('/', conversationService.createConversation)
 router.put('/:id', conversationService.addMembers)
 router.get('/:id', conversationService.getConversation)
 router.get('/:id/messages', conversationService.getMessages)
-router.post('/:id/message', conversationService.createMessage)
 
 module.exports = router

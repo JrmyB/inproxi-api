@@ -52,24 +52,9 @@ const getMessages = (req, res) => {
     .catch(err => res.status(500).send({ message: 'Internal server error.' }))
 }
 
-// const createMessage = (req, res) => {
-//   if (!req.body.content || !req.body.author)
-//     return res.status(422).json({ message: 'Required fields missing.'})
-  
-//   const data = {
-//     conversation_id: req.params.id,
-//     content: req.body.content,
-//     author: req.body.author
-//   }
-
-//   msgMethods.createMessage(data)
-//     .then(msgs => res.status(200).json(msgs))
-//     .catch(err => res.status(500).send({ message: 'Internal server error.' }))
-// }
-
 module.exports = {
   createConversation: createConversation,
   addMembers: addMembers,
-  getMessages: getMessages,
-  createMessage: createMessage
+  getConversation: getConversation,
+  getMessages: getMessages
 }

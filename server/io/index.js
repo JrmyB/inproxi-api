@@ -56,8 +56,8 @@ const start = () => {
       delete clients[getKey(clients, socket.id)]
     }
 
-    const privateMsg = data => {
-      io.in(data.group_id).emit('private_message', data)
+    const conversationMsg = data => {
+      io.in(data.group_id).emit('conversation_message', data)
       
       msgM.createMessage(data)
 	.catch(err => console.log('RTM | ' + err))
@@ -73,7 +73,7 @@ const start = () => {
 
     socket.on('auth', authentication)
     socket.on('disconnect', disconnect)
-    socket.on('private_message', privateMsg)
+    socket.on('conversation_message', conversationMsg)
     socket.on('join_room', joinRoom)
     socket.on('room_message', roomMsg)
   })

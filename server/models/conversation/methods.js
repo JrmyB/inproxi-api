@@ -54,7 +54,7 @@ const deleteMember = (conversation, memberId) => new Promise((resolve, reject) =
 const getConversations = userId => new Promise((resolve, reject) => {
   Conversation
     .find({ members: userId })
-    .select('-_id name')
+    .select('_id name')
     .exec()
     .then(conversations => {
       resolve(conversations)

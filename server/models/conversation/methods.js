@@ -78,6 +78,7 @@ const getConversationsFromUserId = userId => new Promise((resolve, reject) => {
           .limit(1)
           .exec()
       	  .then(msg => {
+	    console.log(msg)
 	    let convWithMsg = {}
 	    convWithMsg.conversation = conversation
 	    if (msg) convWithMsg.last_message = msg[0].content

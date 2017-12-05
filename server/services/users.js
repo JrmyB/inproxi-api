@@ -10,7 +10,10 @@ const getUser = (req, res) => {
       if (user === null) return res.status(404).send({ message: 'User not found.' });
       res.status(200).json(user);
     })
-    .catch(err => res.status(500).send({ message: 'Internal server error.'}))
+    .catch(err => {
+      console.error(err)
+      res.status(500).send({ message: 'Internal server error.'})
+    })
 }
 
 const createUser = (req, res) => {
@@ -23,8 +26,10 @@ const createUser = (req, res) => {
     .catch(err => {
       if (err && err.code === 11000)
 	return res.status(409).json({ message: 'This email is taken. Try another.' });
-      if (err)
+      if (err) {
+	console.error(err)
 	return res.status(500).send({ message: 'Internal server error.' });
+      }
     })
 }
 
@@ -45,9 +50,15 @@ const updateUser = (req, res) => {
 	    .then(() => res.status(200).json(user))
 	    .catch(err => res.status(500).send({ message: 'Internal server error.'}))
 	})
-	.catch(err => res.status(500).send({ message: 'Internal server error.'}))
+        .catch(err => {
+	  console.error(err)
+	  res.status(500).send({ message: 'Internal server error.'})
+	})
     })
-    .catch(err => res.status(500).send({ message: 'Internal server error.'}))
+    .catch(err => {
+      console.error(err)
+      res.status(500).send({ message: 'Internal server error.'})
+    })
 }
 
 const deleteUser = (req, res) => {
@@ -67,9 +78,15 @@ const deleteUser = (req, res) => {
 	    .then(user => res.sendStatus(200))
 	    .catch(err => res.status(500).send({ message: 'Internal server error.' }))
 	})
-	.catch(err => res.status(500).send({ message: 'Internal server error.'}))
+	.catch(err => {
+	  console.error(err)
+	  res.status(500).send({ message: 'Internal server error.'})
+	})
     })
-    .catch(err => res.status(500).send({ message: 'Internal server error.'}))
+    .catch(err => {
+      console.error(err)
+      res.status(500).send({ message: 'Internal server error.'})
+    })
 }
 
 const getFriends = (req, res) => {
@@ -81,19 +98,28 @@ const getFriends = (req, res) => {
 	.then(friends => res.status(200).json(friends))
 	.catch(err => res.status(500).send({ message: 'Internal server error.'}))
     })
-    .catch(err => res.status(500).send({ message: 'Internal server error.'}))
+    .catch(err => {
+      console.error(err)
+      res.status(500).send({ message: 'Internal server error.'})
+    })
 }
 
 const getFriendRequests = (req, res) => {
   frMethods.getFriendRequests(req.query.outgoing, req.params.id)
     .then(friendRequests => res.status(200).json(friendRequests))
-    .catch(err => res.status(500).send({ message: 'Internal server error.'}))
+    .catch(err => {
+      console.error(err)
+      res.status(500).send({ message: 'Internal server error.'})
+    })
 }
 
 const getConversations = (req, res) => {
   convMethods.getConversationsFromUserId(req.params.id)
     .then(conversations => res.status(200).json(conversations))
-    .catch(err => res.status(500).send({ message: 'Internal server error' }))
+    .catch(err => {
+      console.error(err)
+      res.status(500).send({ message: 'Internal server error.'})
+    })
 }
 
 module.exports = {

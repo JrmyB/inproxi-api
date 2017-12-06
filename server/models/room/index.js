@@ -7,9 +7,13 @@ const RoomSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true
+  password: {
+    type: String,
+    required: false
+  },
+  area_id: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false
   }
 })
 

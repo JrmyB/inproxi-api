@@ -57,8 +57,8 @@ const start = () => {
     }
 
     const conversationMsg = data => {
-      //io.in(data.group_id).emit('conversation_message', data) // include sender
-      socket.broadcast.to(data.group_id).emit('message', data) // exclude sender
+      io.in(data.group_id).emit('conversation_message', data) // include sender
+     // socket.broadcast.to(data.group_id).emit('message', data) // exclude sender
       
       msgM.createMessage(data)
 	.catch(err => console.log('RTM | ' + err))

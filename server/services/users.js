@@ -3,6 +3,7 @@
 const userMethods = require('../models/user/methods');
 const frMethods = require('../models/friendRequest/methods');
 const convMethods = require('../models/conversation/methods')
+const debug = require('debug')('http')
 
 const getUser = (req, res) => {
   debug('Getting user')

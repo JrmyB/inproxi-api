@@ -55,14 +55,29 @@ const start = () => new Promise((resolve, reject) => {
     if (err) reject(err)
   })
 
-  server.listen(port, () => {
-    debug('Listening on port %o', port)
+  const listening = () => {
+    server.listen(port, () => {
+      debug('Listening on port %o', port)
 
-    debug('Starting RTM service')
-    io.start() // Start chat
+      debug('Starting RTM service')
+      io.start() // Start chat
 
-    resolve()
+      resolve()
+    })
+  }
+
+  server.on('error', err => {
+    if (e.code === 'EADDRINUSE') {
+      debug('Address in use, retrying...');
+
+      setTimeout(() => {
+	server.close()
+	listening()
+      }, 1000);
+    }
   })
+
+  listening()
 })
 
 module.exports = {

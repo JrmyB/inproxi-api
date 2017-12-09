@@ -35,7 +35,7 @@ module.exports = {
       ref  : 'origin/master',
       repo : '-b master git@github.com:JrmyB/inproxi-api.git',
       path : '/var/www/inproxi-api-production',
-      'post-deploy' : 'source ~/.zshrc && npm install && pm2 reload ecosystem.config.js --only inproxi-api-prod --env production --update-env'
+      'post-deploy' : 'source ~/.zshrc && npm install && pm2 reload ecosystem.config.js --update-env --only inproxi-api-prod --env production --update-env'
     },
     development : {
       user : 'jrmy',
@@ -44,7 +44,7 @@ module.exports = {
       ref  : 'origin/development', 
       repo : '-b development git@github.com:JrmyB/inproxi-api.git',
       path : '/var/www/inproxi-api-development',
-      'post-deploy' : 'source ~/.zshrc && npm install && pm2 reload ecosystem.config.js --only inproxi-api-dev --env development --update-env'
+      'post-deploy' : 'source ~/.zshrc && npm install && pm2 reload ecosystem.config.js --update-env --only inproxi-api-dev --env development --update-env'
     }
   }
 };

@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const io = require('./io')
 const debug = require('debug')('server')
+const morgan = require('morgan')
 
 let app = express()
 let server = require('http').Server(app)
@@ -35,7 +36,8 @@ const create = config => new Promise(resolve => {
   };
 
   app.use(allowCrossDomain);
-
+  app.use(morgan('dev')) // HTTP logger
+  
   debug('Routes initialization')
   routes.init(app)   // Set up routes
 

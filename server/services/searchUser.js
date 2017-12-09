@@ -1,8 +1,11 @@
 'use strict'
 
 const userMethods = require('../models/user/methods')
+const debug = require('debug')('http')
 
 const searchUser = (req, res) => {
+  debug('Searching user')
+  
   if (!req.query.first_name && !req.query.last_name)
     return res.status(422).json({ message: 'Required field(s) missing.'})
 

@@ -5,6 +5,7 @@ const jwtSecret = require('../../configs/').jwt.secret
 const jwt = require('jsonwebtoken')
 const op = require('./operations')
 const msgM = require('../models/message/methods')
+const debug = require('debug')('RTM')
 
 const init = server => io = io(server)
 const getKey = (obj, value) => Object.keys(obj).find(key => obj[key] === value)
@@ -19,56 +20,66 @@ let clients = {} // key: user_id, value: socket.id
 
 const start = () => {
   io.on('connection', socket => {
-    console.log('RTM | Client connected (' + socket.id + ')')
+    debug('Client connected')
+    
     socket.auth = false
 
     // Check user authorization
     setTimeout(() => { if (!socket.auth) socket.disconnect(true) }, 30000) 
 
     const authentication = data => {
-      console.log('RTM | Authentication (' + socket.id + ')')
-      
+      debug('User authentication')
+
       if (!data.token) {
+	// TODO: proc event error
 	console.log('RTM | Missing token (' + socket.id + ')')
 	disconnect();
       }
-      
+
+      debug('Ckecking token')
       checkToken(data.token)
 	.then(() => {
-	  console.log('RTM | Client authenticated (' + socket.id + ')')
 	  clients[data.user_id] = socket.id // Add socket.id to clients list
 	  socket.auth = true
 
 	  op.joinGroupsAfterAuth(data.user_id, socket)
 	    .catch(err => {
-	      console.log('RTM | ' + err)
+	      // TODO: proc event error
+	      debug('%O', err)
 	      disconnect()
 	    })
 	})
 	.catch(err => {
-	  console.log('RTM | ' + err)
+	  debug('%O', err)
+	  // TODO: proc event error
 	  disconnect()
 	})  
     }
 
     const disconnect = () => {
-      console.log('RTM | Client disconnected (' + socket.id + ')')
+      debug('Client disconnection')
       delete clients[getKey(clients, socket.id)]
     }
 
     const conversationMsg = data => {
-      io.in(data.group_id).emit('conversation_message', data) // include sender
-     // socket.broadcast.to(data.group_id).emit('message', data) // exclude sender
+      debug('Sending conversation message')
+
+      //      io.in(data.group_id).emit('conversation_message', data) // include sender
+      socket.broadcast.to(data.group_id).emit('message', data) // exclude sender
       
       msgM.createMessage(data)
 	.catch(err => console.log('RTM | ' + err))
     }
 
     const roomMsg = data => {
+      debug('Sending room message')
+
       io.in('epitech_exp').emit('epitech_exp', data)
     }
     
     const joinRoom = () => {
+      debug('Joining room')
+      
       socket.join('epitech_exp')
     }
 
@@ -96,16 +107,3 @@ module.exports = {
   joinGroup: joinGroup,
   leaveGroup: leaveGroup
 }
-
-// socket.on('join_room', data => socket.join(data.room_id))
-// socket.on('leave_room', data => socket.leave(data.room_id))
-// socket.on('join_room', data => socket.join(data.room_id))
-// socket.on('leave_room', data => socket.leave(data.room_id))
-// socket.on('private_message', data => {
-//   console.log('Connected clients: ' + clients)
-//   console.log('Private message: from ' + data.from
-// 		  + ', to ' + data.to + ', msg ' + data.message)
-//   console.log('Sending message to:' + clients[data.to])
-//   io.sockets.connected[clients[data.to]].emit('private_message', data)
-// })
-

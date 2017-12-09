@@ -3,14 +3,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const morgan = require('morgan');
 const io = require('./io')
+const debug = require('debug')('server')
 
 let app = express()
 let server = require('http').Server(app)
 
 const create = config => new Promise(resolve => {
   const routes = require('./routes');
+
+  debug('Loading configuration')
   
   // Settings
   app.set('env', config.env);
@@ -33,9 +35,13 @@ const create = config => new Promise(resolve => {
   };
 
   app.use(allowCrossDomain);
-  app.use(morgan('dev')) // Logger
+
+  debug('Routes initialization')
   routes.init(app)   // Set up routes
+
+  debug('RTM initialization')
   io.init(server) // Set up chat
+  
   resolve()
 })
 
@@ -44,15 +50,17 @@ const start = () => new Promise((resolve, reject) => {
   const port = app.get('port')
   const database = app.get('database')
 
+  debug('Database connection')
   mongoose.connect(database, err => {
     if (err) reject(err)
   })
 
   server.listen(port, () => {
-    console.log('INPROXI API (PORT: ' + port
-		+ ', ENV: ' + process.env.NODE_ENV + ') listening ...');
-    
+    debug('Listening on port %o', port)
+
+    debug('Starting RTM service')
     io.start() // Start chat
+
     resolve()
   })
 })

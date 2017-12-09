@@ -2,8 +2,7 @@
 
 const server = require('./server')
 const config = require('./configs')
-
-const Chat = require('./server/io')
+const debug = require('debug')('http')
 
 server.create(config)
   .then(server.start())
@@ -11,6 +10,6 @@ server.create(config)
 
 // Debugging unhandled rejections promises
 process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+  console.err('Unhandled Rejection at: Promise', p, 'reason:', reason);
   // application specific logging, throwing an error, or other logic here
 })

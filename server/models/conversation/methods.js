@@ -57,6 +57,9 @@ const getConversations = userId => new Promise((resolve, reject) => {
     .select('_id name')
     .exec()
     .then(conversations => {
+      if (conversations === null)
+	console.log('pas de conv')
+      
       resolve(conversations)
     })
     .catch(err => reject(err))
@@ -68,9 +71,11 @@ const getConversationsFromUserId = userId => new Promise((resolve, reject) => {
     .populate('members', 'first_name last_name _id')
     .exec()
     .then(conversations => {
-
+      if (!conversations.length)
+	resolve(conversations)
+      
       let fullConvs = []
-
+      
       // Get last messages
       conversations.forEach((conversation, i) => {
 	Message.find({ 'conversation': conversation._id })

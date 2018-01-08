@@ -5,7 +5,7 @@ const jwtSecret = require('../../configs/').jwt.secret
 const jwt = require('jsonwebtoken')
 const op = require('./operations')
 const msgM = require('../models/message/methods')
-const debug = require('debug')('RTM')
+const debug = require('debug')('rtm')
 
 const init = server => io = io(server)
 const getKey = (obj, value) => Object.keys(obj).find(key => obj[key] === value)
@@ -68,7 +68,7 @@ const start = () => {
       socket.broadcast.to(data.group_id).emit('message', data) // exclude sender
       
       msgM.createMessage(data)
-	.catch(err => console.log('RTM | ' + err))
+	.catch(err => console.log('rtm | ' + err))
     }
 
     const roomMsg = data => {

@@ -16,6 +16,7 @@ router.put('/:id', userService.updateUser)
 router.delete('/:id', userService.deleteUser)
 router.get('/:id/friends', userService.getFriends)
 router.get('/:id/conversations', userService.getConversations)
+router.delete('/:id/friends/:fid', userService.deleteFriend)
 
 // Retrieve friend requests (incoming or outgoing)
 // incoming: no params

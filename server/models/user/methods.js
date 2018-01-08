@@ -65,6 +65,17 @@ const deleteUser = user => new Promise((resolve, reject) => {
     .catch(err => reject(err))
 })
 
+const deleteFriend = (user, friendId) => new Promise((resolve, reject) => {
+  let i = user.friends.indexOf(friendId)
+
+  if (i > -1)
+    user.friends.splice(i, 1)
+
+  user.save()
+    .then(user => resolve())
+    .catch(err => reject(err))
+})
+
 const getFriends = user => new Promise((resolve, reject) => {
   var friends = []
 
@@ -93,6 +104,7 @@ module.exports = {
   createUser: createUser,
   updateUser: updateUser,
   deleteUser: deleteUser,
+  deleteFriend: deleteFriend,
   getFriends: getFriends,
   searchUser: searchUser
 };

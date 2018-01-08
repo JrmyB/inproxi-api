@@ -121,6 +121,26 @@ const getFriends = (req, res) => {
     })
 }
 
+const deleteFriend = (req, res) => {
+  debug('Delete user\'s friends %o - %o', req.params.id, req.params.f_id)
+
+  userMethods.getUserById(req.params.id)
+    .then(user => {
+      if (user === null) return res.status(404).send({ message: 'User not found.' });
+
+      userMethods.deleteFriend(user, req.params.fid)
+	.then(friends => res.sendStatus(200))
+	.catch(err => {
+	  debug('%O', err)
+	  res.status(500).send({ message: 'Internal servereerror' })
+	})
+    })
+    .catch(err => {
+      debug('%O', err)
+      res.status(500).send({ message: 'Internal server error.'})
+    })  
+}
+
 const getFriendRequests = (req, res) => {
   debug('Get user\'s friend requests %o', req.params.id)
   debug('Type: %o', req.query.outgoing || 'ingoing')
@@ -150,6 +170,7 @@ module.exports = {
   updateUser: updateUser,
   deleteUser: deleteUser,
   getFriends: getFriends,
+  deleteFriend: deleteFriend,
   getFriendRequests: getFriendRequests,
   getConversations: getConversations
 }

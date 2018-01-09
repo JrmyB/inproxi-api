@@ -10,6 +10,7 @@ let router = express.Router()
 router.use(authService.checkToken)
 
 router.post('/', roomService.createRoom)
+router.put('/:id', roomService.updateRoom)
 router.get('/:id', roomService.getRoom)
 
 module.exports = router

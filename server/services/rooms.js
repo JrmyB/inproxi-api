@@ -18,6 +18,27 @@ const createRoom = (req, res) => {
     })
 }
 
+const updateRoom = (req, res) => {
+  debug('Update room')
+
+  roomMethods.getRoomById(req.params.id)
+    .then(room => {
+      if (!room.admin_id.equals(req.body.admin_id))
+	return res.status(401).send({ message: 'Unauthorized'})
+
+      roomMethods.updateRoom(room, req.body)
+	.then(room => res.status(200).json(room))
+	.catch(err => {
+	  debug('%O', err)
+	  res.status(500).send({ message: 'Internal server error.' })
+	})
+    })
+    .catch(err => {
+      debug('%O', err)
+      res.status(500).send({ message: 'Internal server error.' })
+    })
+}
+
 const getRoom = (req, res) => {
   debug('Getting room')
   
@@ -30,6 +51,7 @@ const getRoom = (req, res) => {
 }
 
 module.exports = {
-    createRoom: createRoom,
-    getRoom: getRoom
+  createRoom: createRoom,
+  updateRoom: updateRoom,
+  getRoom: getRoom
 }

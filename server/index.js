@@ -36,7 +36,7 @@ const create = config => new Promise(resolve => {
   };
 
   app.use(allowCrossDomain);
-  app.use(morgan('dev')) // HTTP logger
+  //app.use(morgan('dev')) // HTTP logger
   
   debug('Routes initialization')
   routes.init(app)   // Set up routes

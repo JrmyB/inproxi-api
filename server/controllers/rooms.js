@@ -9,7 +9,7 @@ let router = express.Router()
 // Authentification checking for all next routes
 router.use(authService.checkToken)
 
-router.post('/:id', roomService.createRoom)
+router.post('/', roomService.createRoom)
 router.get('/:id', roomService.getRoom)
 
 module.exports = router

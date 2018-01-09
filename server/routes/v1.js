@@ -13,7 +13,7 @@ let router = express.Router()
 router.use('/auth', authController)
 router.use('/users', usersController)
 router.use('/friendrequest', friendRequestController)
-router.use('/rooms', roomsController)
+router.use('/room', roomsController)
 router.use('/search_user', searchUserController)
 router.use('/conversation', conversationController)
 

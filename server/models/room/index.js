@@ -7,22 +7,23 @@ const RoomSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  password: {
-    type: String,
-    required: false
+  admin_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
-  area_id: {
-    type: [mongoose.Schema.Types.ObjectId],
-    required: false
+  coords: {
+    type : Array ,
+    "default" : []
   }
 })
 
 RoomSchema.options.toJSON = {
   transform: (doc, ret) => {
-    ret.id = ret._id;
-    delete ret._id;
-    delete ret.__v;
-    return ret;
+    ret.id = ret._id
+    delete ret._id
+    delete ret.__v
+    return ret
   }
 }
 

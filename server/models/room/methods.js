@@ -11,8 +11,11 @@ const getRoomById = id => new Promise((resolve, reject) => {
 const createRoom = data => new Promise((resolve, reject) => {
   const room = new Room({
     name: data.name,
-    password: data.password || undefined
+    password: data.password || undefined,
+    admin_id: data.admin_id,
   })
+
+  room.coords = room.coords.concat(data.coords)
 
   room.save()
     .then(room => resolve(room))
@@ -22,7 +25,6 @@ const createRoom = data => new Promise((resolve, reject) => {
 const updateRoom = (room, data) => new Promise((resolve, reject) => {
   room.name = data.name || room.name
   room.password = data.password || room.password
-  room.area_id = data.area_id || room.area_id
 
   room.save()
     .then(room => resolve(room))

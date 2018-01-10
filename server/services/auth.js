@@ -9,6 +9,8 @@ const debug = require('debug')('http')
 const User = require('../models/user/')
 const crypto = require('crypto')
 const mailer = require('../mailer/')
+const bcrypt = require('bcrypt')
+const SALT_WORK_FACTOR = 10
 
 const jwtVerify = util.promisify(jwt.verify)
 
@@ -73,36 +75,41 @@ const resetPassword = (req, res) => {
       }
 
       crypto.randomBytes(5, (err, buffer) => {
-        var newPwd = buffer.toString('hex')
+	let newPwd = buffer.toString('hex')
 
-	User.findByIdAndUpdate(
-	  { _id: user._id },
-	  { password: newPwd },
-	  {
-	    upsert: true,
-	    new: true
-	  })
-	  .exec()
-	  .then(nUser => {
-	    const data = {
-              to: nUser.email,
-              from: mailer.email,
-              template: 'reset-password',
-              subject: 'New password has arrived!',
-              context: {
-		name: user.first_name,
-		password: newPwd
-              }
-	    }
+	bcrypt.genSalt(SALT_WORK_FACTOR)
+	  .then(salt => bcrypt.hash(newPwd, salt))
+	  .then(hash => {
 
-	    mailer.smtpTransport.sendMail(data, err => {
-	      console.log(err)
-              if (!err) return res.sendStatus(200)
-	    })
-	  })
-	  .catch(err => {
-	    debug('%O', err)
-	    res.status(500).send({ message: 'Internal server error.'})
+	    User.findByIdAndUpdate(
+	      { _id: user._id },
+	      { password: hash },
+	      {
+		upsert: true,
+		new: true
+	      })
+	      .exec()
+	      .then(nUser => {
+		const data = {
+		  to: nUser.email,
+		  from: mailer.email,
+		  template: 'reset-password',
+		  subject: 'New password has arrived!',
+		  context: {
+		    name: user.first_name,
+		    password: newPwd
+		  }
+		}
+
+		mailer.smtpTransport.sendMail(data, err => {
+		  console.log(err)
+		  if (!err) return res.sendStatus(200)
+		})
+	      })
+	      .catch(err => {
+		debug('%O', err)
+		res.status(500).send({ message: 'Internal server error.'})
+	      })
 	  })
       })
     })

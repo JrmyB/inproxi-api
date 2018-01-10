@@ -31,8 +31,12 @@ const createRoom = data => new Promise((resolve, reject) => {
 
 const updateRoom = (room, data) => new Promise((resolve, reject) => {
   room.name = data.name || room.name
-  room.password = data.password || room.password
 
+  if (data.coords) {
+    room.coords = []
+    room.coords = room.coords.concat(data.coords)
+  }
+  
   room.save()
     .then(room => resolve(room))
     .catch(err => reject(err))

@@ -72,15 +72,22 @@ const start = () => {
     }
 
     const roomMsg = data => {
-      debug('Sending room message')
-
-      io.in('epitech_exp').emit('epitech_exp', data)
+      debug('Sending room message to %o', data.room_id)
+      
+      socket.broadcast.to(data.room_id).emit('room_message', data)
+     // io.in(data.room_id).emit(data.room_id, data)
     }
     
-    const joinRoom = () => {
+    const joinRoom = data => {
       debug('Joining room')
       
-      socket.join('epitech_exp')
+      socket.join(data.room_id)
+    }
+
+    const leaveRoom = data  => {
+      debug('Leaving room')
+
+      socket.leave(data.room_id)
     }
 
     socket.on('auth', authentication)
@@ -88,6 +95,7 @@ const start = () => {
     socket.on('conversation_message', conversationMsg)
     socket.on('join_room', joinRoom)
     socket.on('room_message', roomMsg)
+    socket.on('leave_room', leaveRoom)
   })
 }
 

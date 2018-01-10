@@ -8,6 +8,13 @@ const getRoomById = id => new Promise((resolve, reject) => {
     .catch(err => reject(err))
 })
 
+const getRooms = () => new Promise((resolve, reject) => {
+  Room.find({})
+    .exec()
+    .then(rooms => resolve(rooms))
+    .catch(err => reject(err))
+})
+
 const createRoom = data => new Promise((resolve, reject) => {
   const room = new Room({
     name: data.name,
@@ -39,6 +46,7 @@ const deleteRoom = room => new Promise((resolve, reject) => {
 
 module.exports = {
   getRoomById: getRoomById,
+  getRooms: getRooms,
   createRoom: createRoom,
   updateRoom: updateRoom,
   deleteRoom: deleteRoom

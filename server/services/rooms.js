@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const roomMethods = require('../models/room/methods')
 const userMethods = require('../models/user/methods')
@@ -50,8 +50,22 @@ const getRoom = (req, res) => {
   })
 }
 
+const getRooms = (req, res) => {
+  debug('Getting all rooms')
+
+  roomMethods.getRooms()
+    .then(rooms => {
+      res.status(200).json(rooms)
+    })
+    .catch(err => {
+      debug('%O', err)
+      res.status(500).send({ message: 'Internal server error.' })
+    })  
+}
+
 module.exports = {
   createRoom: createRoom,
   updateRoom: updateRoom,
+  getRooms: getRooms,
   getRoom: getRoom
 }

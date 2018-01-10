@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const io = require('./io')
 const debug = require('debug')('server')
 const morgan = require('morgan')
+const multer = require('multer')
 
 let app = express()
 let server = require('http').Server(app)

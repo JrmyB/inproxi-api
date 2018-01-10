@@ -52,7 +52,7 @@ const updateUser = (user, data) => new Promise((resolve, reject) => {
   user.first_name = data.first_name || user.first_name
   user.last_name = data.last_name || user.last_name
   user.email = data.email || user.email
-  user.token = data.token || user.token
+  user.password = user.new_password || user.password
   
   user.save()
     .then(user => resolve(user))

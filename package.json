@@ -17,6 +17,8 @@
     "jsonwebtoken": "^7.4.3",
     "lodash": "^4.17.4",
     "mongoose": "^4.12.1",
+    "nodemailer": "^4.4.1",
+    "nodemailer-express-handlebars": "^2.0.0",
     "post": "0.0.1",
     "socket.io": "^2.0.3",
     "tape": "^4.8.0"

@@ -6,6 +6,9 @@ const configs = require('../../configs/');
 const _ = require('lodash');
 const util = require('util')
 const debug = require('debug')('http')
+const User = require('../models/user/')
+const crypto = require('crypto')
+const mailer = require('../mailer/')
 
 const jwtVerify = util.promisify(jwt.verify)
 
@@ -59,7 +62,58 @@ const checkToken = (req, res, next) => {
     .catch(err => res.status(401).json({ message: 'Invalid token.' }))
 }
 
+const resetPassword = (req, res) => {
+  User.findOne({
+    email: req.body.email
+  })
+    .exec()
+    .then(user => {
+      if (user === null) {
+	return res.status(404).send({ message: 'User not found.' });
+      }
+
+      crypto.randomBytes(5, (err, buffer) => {
+        var newPwd = buffer.toString('hex')
+
+	User.findByIdAndUpdate(
+	  { _id: user._id },
+	  { password: newPwd },
+	  {
+	    upsert: true,
+	    new: true
+	  })
+	  .exec()
+	  .then(nUser => {
+	    const data = {
+              to: nUser.email,
+              from: mailer.email,
+              template: 'reset-password',
+              subject: 'New password has arrived!',
+              context: {
+		name: user.first_name,
+		password: newPwd
+              }
+	    }
+
+	    mailer.smtpTransport.sendMail(data, err => {
+	      console.log(err)
+              if (!err) return res.sendStatus(200)
+	    })
+	  })
+	  .catch(err => {
+	    debug('%O', err)
+	    res.status(500).send({ message: 'Internal server error.'})
+	  })
+      })
+    })
+    .catch(err => {
+      debug('%O', err)
+      res.status(500).send({ message: 'Internal server error.'})
+    })
+}
+
 module.exports = {
   authentication : authentication,
-  checkToken : checkToken
+  checkToken : checkToken,
+  resetPassword: resetPassword
 }

@@ -50,6 +50,26 @@ const getRoom = (req, res) => {
   })
 }
 
+const deleteRoom = (req, res) => {
+  debug('Deleting Room')
+
+  roomMethods.getRoomById(req.params.id)
+    .then(room => {
+      if (room === null) return res.status(404).send({ message: 'Room not found.' });
+      
+      roomMethods.deleteRoom(room)
+	.then(room => res.sendStatus(200))
+        .catch(err => {
+	  debug('%O', err)
+	  res.status(500).send({ message: 'Internal server error.' })
+	})
+    })
+    .catch(err => {
+      debug('%O', err)
+      res.status(500).send({ message: 'Internal server error.' })
+    })  
+}
+
 const getRooms = (req, res) => {
   debug('Getting all rooms')
 
@@ -66,6 +86,7 @@ const getRooms = (req, res) => {
 module.exports = {
   createRoom: createRoom,
   updateRoom: updateRoom,
+  deleteRoom: deleteRoom,
   getRooms: getRooms,
   getRoom: getRoom
 }

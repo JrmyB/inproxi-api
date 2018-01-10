@@ -13,5 +13,6 @@ router.post('/', roomService.createRoom)
 router.put('/:id', roomService.updateRoom)
 router.get('/:id', roomService.getRoom)
 router.get('/', roomService.getRooms)
+router.delete('/:id', roomService.deleteRoom)
 
 module.exports = router

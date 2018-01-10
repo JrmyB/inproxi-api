@@ -25,7 +25,7 @@ const create = config => new Promise(resolve => {
   // Middlewares
   app.use(bodyParser.urlencoded({ extended: true }))
   app.use(bodyParser.json())
-
+  
   const allowCrossDomain = (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*")
     res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE")

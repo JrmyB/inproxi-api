@@ -164,6 +164,30 @@ const getConversations = (req, res) => {
     })
 }
 
+// const setProfilePicture = (req, res) => {
+//   debug('Uploading profile picture')
+
+//   if (!req.body.binary)
+//     return res.status(422).json({ message: 'Required field(s) missing.'})
+  
+//   userMethods.getUserById(req.params.id)
+//     .then(user => {
+//       if (user === null)
+//  	return res.status(404).send({ message: 'User not found.' });
+
+//       userMethods.setProfilePicture(user, req.body.binary)
+//  	.then(user => res.sendStatus(200))
+//  	.catch(err => {
+//  	  debug('%O', err)
+//  	  res.status(500).send({ message: 'Internal server error.'})
+//  	})  
+//     })
+//     .catch(err => {
+//       debug('%O', err)
+//       res.status(500).send({ message: 'Internal server error.'})
+//     })  
+// }
+
 module.exports = {
   getUser: getUser,
   createUser: createUser,

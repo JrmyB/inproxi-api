@@ -53,6 +53,7 @@ const updateUser = (user, data) => new Promise((resolve, reject) => {
   user.last_name = data.last_name || user.last_name
   user.email = data.email || user.email
   user.password = user.new_password || user.password
+  user.img = data.img || user.img
   
   user.save()
     .then(user => resolve(user))
@@ -88,7 +89,8 @@ const getFriends = user => new Promise((resolve, reject) => {
 	friends.push({
 	  id: friend._id,
 	  first_name: friend.first_name,
-	  last_name: friend.last_name
+	  last_name: friend.last_name,
+	  img: friend.img
 	});
 
 	if (i === user.friends.length - 1)
@@ -97,6 +99,15 @@ const getFriends = user => new Promise((resolve, reject) => {
       .catch(err => reject(err))
   })
 })
+
+// const setProfilePicture = (user, binary) => new Promise((resolve, reject) => {
+//   user.img.data = binary
+//   user.img.contentType = 'image/png'
+
+//   user.save()
+//     .then(user => resolve())
+//     .catch(err => reject(err))  
+// })
 
 module.exports = {
   getUserById: getUserById,
@@ -107,4 +118,5 @@ module.exports = {
   deleteFriend: deleteFriend,
   getFriends: getFriends,
   searchUser: searchUser
+//  setProfilePicture: setProfilePicture
 };

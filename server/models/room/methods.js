@@ -3,8 +3,14 @@
 const Room = require('./')
 
 const getRoomById = id => new Promise((resolve, reject) => {
+  console.log('lolilol')
+
   Room.findById(id)
-    .then(room => resolve(room))
+    .then(room => {
+      console.log('haha')
+      console.log(room)
+      resolve(room)
+    })
     .catch(err => reject(err))
 })
 

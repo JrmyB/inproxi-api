@@ -42,12 +42,16 @@ const updateRoom = (req, res) => {
 const getRoom = (req, res) => {
   debug('Getting room')
   
-  roomMethods.getRoomById(req.params.id, (err, room) => {
-    if (err) return res.status(500).send({ message: 'Internal server error.'});
-    if (room === null) return res.status(404).send({ message: 'Room not found.' });
-    
-    res.status(200).json(room)
-  })
+  roomMethods.getRoomById(req.params.id)
+    .then(room => {
+      if (room === null) return res.status(404).send({ message: 'Room not found.' });
+
+      res.status(200).json(room)
+    })
+    .catch(err => {
+      debug('%O', err)
+      res.status(500).send({ message: 'Internal server error.' })
+    })  
 }
 
 const deleteRoom = (req, res) => {

@@ -22,7 +22,7 @@ const getRooms = () => new Promise((resolve, reject) => {
 })
 
 const createRoom = data => new Promise((resolve, reject) => {
-  console.log(data.coords)
+  console.log(data)
   
   const room = new Room({
     name: data.name,

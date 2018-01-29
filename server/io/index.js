@@ -73,6 +73,8 @@ const start = () => {
 
     const roomMsg = data => {
       debug('Sending room message to %o', data.room_id)
+
+      console.log('Room message: ' + data)
       
       socket.broadcast.to(data.room_id).emit('room_message', data)
      // io.in(data.room_id).emit(data.room_id, data)
@@ -80,6 +82,8 @@ const start = () => {
     
     const joinRoom = data => {
       debug('Joining room')
+
+      console.log('Joining room: ' + data)
       
       socket.join(data.room_id)
     }

@@ -1,28 +1,65 @@
-'use strict';
+'use strict'
 
-const Room = require('./');
-const userMethods = require('../user/methods');
+const Room = require('./')
 
-function getRoomById(id, cb) {
-  Room.findById(id, (err, room) => {
-    if (err) return cb(err, null);
-    cb(null, room);
-  });
-};
+const getRoomById = id => new Promise((resolve, reject) => {
+  console.log('lolilol')
 
-function createRoom(data, cb) {
-  let room = new Room({
+  Room.findById(id)
+    .then(room => {
+      console.log('haha')
+      console.log(room)
+      resolve(room)
+    })
+    .catch(err => reject(err))
+})
+
+const getRooms = () => new Promise((resolve, reject) => {
+  Room.find({})
+    .exec()
+    .then(rooms => resolve(rooms))
+    .catch(err => reject(err))
+})
+
+const createRoom = data => new Promise((resolve, reject) => {
+  console.log(data.coords)
+  
+  const room = new Room({
     name: data.name,
-    owner: data.owner
+    password: data.password || undefined,
+    admin_id: data.admin_id,
   })
 
-  room.save((err, room) => {
-    if (err) return cb(err, null);
-    cb(null, room);
-  });
-};
+  room.coords = room.coords.concat(data.coords)
+
+  room.save()
+    .then(room => resolve(room))
+    .catch(err => reject(err))
+})
+
+const updateRoom = (room, data) => new Promise((resolve, reject) => {
+  room.name = data.name || room.name
+
+  if (data.coords) {
+    room.coords = []
+    room.coords = room.coords.concat(data.coords)
+  }
+  
+  room.save()
+    .then(room => resolve(room))
+    .catch(err => reject(err))
+})
+
+const deleteRoom = room => new Promise((resolve, reject) => {
+  Room.remove({ _id: room._id })
+    .then(room => resolve(room))
+    .catch(err => reject(err))
+})
 
 module.exports = {
   getRoomById: getRoomById,
+  getRooms: getRooms,
   createRoom: createRoom,
-};
+  updateRoom: updateRoom,
+  deleteRoom: deleteRoom
+}

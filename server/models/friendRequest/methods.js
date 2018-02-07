@@ -1,81 +1,66 @@
-'use strict';
+'use strict'
 
-const FriendRequest = require('./');
-const User = require('../user/');
+const FriendRequest = require('./')
+const User = require('../user/')
 
-function getFriendRequestById(id, cb) {
-  FriendRequest.findById(id, (err, fr) => {
-    if (err) return cb(err, null);
-    cb(null, fr);
-  });
-};
+const getFriendRequestById = id => new Promise((resolve, reject) => {
+  FriendRequest.findById(id, (err, friendRequest) => err
+			 ? reject(err)
+			 : resolve(friendRequest))
+})
 
-function addFriendRequest(toId, fromId, msg, cb) {
-  let friendRequest = new FriendRequest({
-    from: fromId,
-    to: toId,
+const addFriendRequest = (to, from, msg) => new Promise((resolve, reject) => {
+  const friendRequest = new FriendRequest({
+    from: from,
+    to: to,
     message: msg || ''
   });
 
-  friendRequest.save((err, fr) => {
-    if (err) return cb(err, null);
-    cb(null, fr);
-  });
-};
+  friendRequest.save()
+    .then(friendRequest => resolve(friendRequest))
+    .catch(err => reject(err))
+})
 
-function deleteFriendRequest(fr, cb) {
-  FriendRequest.remove({ _id: fr._id }, (err, friendRequest) => {
-    if (err) return cb(err);
-    cb(null);
-  });
-};
+const deleteFriendRequest = (friendRequest) => new Promise((resolve, reject) => {
+  FriendRequest.remove({ _id: friendRequest._id })
+    .then(() => resolve())
+    .catch(err => reject(err))
+})
 
-function updateFriendRequest(fr, status, cb) {
-  if (status === 'accept') {
-    User.find({$or: [{ _id: fr.from }, { _id: fr.to }]}, (err, users) => {
-      if (err || users === null) return cb(err);
-      
-      users.forEach(user => {
-	let newFriendId = user._id.equals(fr.from)
-	    ? fr.to
-	    : fr.from; 
-	
-	user.friends.push(newFriendId);
-	user.save(err => {
-	  if (err) return cb(err);
-	});
-      });
+const acceptFriendRequest = (friendRequest, status) => new Promise((resolve, reject) => {
+  User.find({$or: [{ _id: friendRequest.from }, { _id: friendRequest.to }]})
+    .then(users => {
+      if (users === undefined) reject()
 
-      cb(null);
-    });
-  }
-}
+      if(users[0]._id.equals(friendRequest.from)) {
+	users[0].friends.push(friendRequest.to)
+	users[1].friends.push(friendRequest.from)
+      } else {
+	users[0].friends.push(friendRequest.from)
+	users[1].friends.push(friendRequest.to)
+      }
 
-function getFriendRequests(outgoing, userId, cb) {
-  let type = outgoing
+      Promise.all([users[0].save(), users[1].save()])
+	.then(() => resolve())
+	.catch(err => reject(err))
+    })
+    .catch(err => reject(err))
+})
+
+const getFriendRequests = (outgoing, userId) => new Promise((resolve, reject) => {
+  const type = outgoing
       ? { from: userId }
       : { to: userId }
-  
-  FriendRequest.find(type, (err, friendRequests) => {
-    if (err) return cb(err, null);
 
-    let frs = friendRequests.map(e => {
-      return {
-	id: e._id,
-	from: e.from,
-	to: e.to,
-	message: e.message
-      }
-    });
-    
-    cb(null, frs);
-  })
-};
-
+  FriendRequest.find(type)
+    .then(friendRequests => resolve(friendRequests))
+    .catch(err => reject(err))
+})
+							    
 module.exports = {
   getFriendRequestById: getFriendRequestById,
   addFriendRequest: addFriendRequest,
   deleteFriendRequest: deleteFriendRequest,
-  updateFriendRequest: updateFriendRequest,
+  acceptFriendRequest: acceptFriendRequest,
   getFriendRequests: getFriendRequests
 };

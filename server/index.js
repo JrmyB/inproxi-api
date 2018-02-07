@@ -3,72 +3,87 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const morgan = require('morgan');
 const io = require('./io')
+const debug = require('debug')('server')
+const morgan = require('morgan')
+const multer = require('multer')
 
-module.exports = function() {
-  let app = express();
-  let server = require('http').Server(app)
+let app = express()
+let server = require('http').Server(app)
+
+const create = config => new Promise(resolve => {
+  const routes = require('./routes');
+
+  debug('Loading configuration')
   
-  const create = (config) => {
-    let routes = require('./routes');
-    
-    // Settings
-    app.set('env', config.env);
-    app.set('port', config.port);
-    app.set('hostname', config.hostname);
-    app.set('database', config.database);
+  // Settings
+  app.set('env', config.env);
+  app.set('port', config.port);
+  app.set('hostname', config.hostname);
+  app.set('database', config.database);
 
-    // Middlewares
-    app.use(bodyParser.urlencoded({ extended: true }))
-    app.use(bodyParser.json())
+  // Middlewares
+  app.use(bodyParser.urlencoded({ extended: true }))
+  app.use(bodyParser.json())
+  
+  const allowCrossDomain = (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE")
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
-    let allowCrossDomain = (req, res, next) => {
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
-      res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    req.method === 'OPTIONS'
+      ? res.sendStatus(200)
+      : next()
+  };
 
-      req.method === 'OPTIONS'
-	? res.send(200)
-	: next();
-    };
+  app.use(allowCrossDomain);
+  app.use(morgan('dev')) // HTTP logger
+  
+  debug('Routes initialization')
+  routes.init(app)   // Set up routes
 
-    app.use(allowCrossDomain);
+  debug('RTM initialization')
+  io.init(server) // Set up chat
+  
+  resolve()
+})
 
-    // Logger
-    // if (config.env == 'development')
-    app.use(morgan('dev'))
-    
-    // Set up routes
-    routes.init(app)
+const start = () => new Promise((resolve, reject) => {
+  const hostname = app.get('hostname')
+  const port = app.get('port')
+  const database = app.get('database')
 
-    // Set up chat
-    io.init(server)
-  }
+  debug('Database connection')
+  mongoose.connect(database, err => {
+    if (err) reject(err)
+  })
 
-  const start = () => {
-    let hostname = app.get('hostname')
-    let port = app.get('port')
-    let database = app.get('database')
-
-    // Connection to db
-    mongoose.connect(database, (err) => {
-      if (err) throw err;
-    })
-
-    // Start server
+  const listening = () => {
     server.listen(port, () => {
-      console.log('INPROXI API listening ... (PORT: ' + port
-		  + ', ENV: ' + process.env.NODE_ENV + ')');
-		  
-      // Start chat
-      io.start()
+      debug('Listening on port %o', port)
+
+      debug('Starting RTM service')
+      io.start() // Start chat
+
+      resolve()
     })
-
   }
 
-  return {
-    create: create,
-    start: start
-  }
+  server.on('error', err => {
+    if (e.code === 'EADDRINUSE') {
+      debug('Address in use, retrying...');
+
+      setTimeout(() => {
+	server.close()
+	listening()
+      }, 1000);
+    }
+  })
+
+  listening()
+})
+
+module.exports = {
+  create: create,
+  start: start
 }

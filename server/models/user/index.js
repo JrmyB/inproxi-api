@@ -1,7 +1,8 @@
-'use strict';
+'use strict'
 
-const mongoose = require('mongoose');
-const bcrypt = require('../../../lib/bcrypt');
+const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
+const SALT_WORK_FACTOR = 10
 
 const UserSchema = new mongoose.Schema({
   first_name: {
@@ -24,6 +25,9 @@ const UserSchema = new mongoose.Schema({
   token: {
     type: String,
     required: false
+  },
+  img: {
+    type: String
   },
   updated_at: {
     type: Date,
@@ -53,19 +57,22 @@ UserSchema.pre('save', function(next) {
 
   if (!user.isModified('password')) return next()
 
-  bcrypt.crypt(user.password, (err, hash) => {
-    if (err) return next(err)
-    user.password = hash
-    next()
-  })
+  bcrypt.genSalt(SALT_WORK_FACTOR)
+    .then(salt => bcrypt.hash(user.password, salt))
+    .then(hash => {
+      user.password = hash
+      next()
+    })
+    .catch(err => next(err))
 })
 
-UserSchema.methods.comparePwd = function(candidatePwd, cb) {
-  const user = this
-
-  bcrypt.compare(candidatePwd, user.password, (err, isPwdMatch) => {
-    if (err) return cb(err)
-    cb(null, isPwdMatch)
+UserSchema.methods.comparePwd = function(candidatePwd) {
+  return new Promise((resolve, reject) => {
+    const user = this
+    
+    bcrypt.compare(candidatePwd, user.password)
+      .then(isPwdMatch => resolve(isPwdMatch))
+      .catch(err => reject(err))
   })
 }
 

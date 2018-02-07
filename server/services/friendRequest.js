@@ -1,35 +1,54 @@
-'use strict';
+'use strict'
 
 const methods = require('../models/friendRequest/methods');
+const debug = require('debug')('http')
 
-function add(req, res) {
+const add = (req, res) => {
+  debug('Adding friend request')
   if (!req.body.to || !req.body.from)
     return res.status(422).json({ message: 'Required field(s) missing.' });
-
-  methods.addFriendRequest(req.body.to, req.body.from, req.body.message, (err, fr) => err
-			   ? res.status(500).send({ message: 'Internal server error.' })
-			   : res.status(200).send(fr))
+  
+  methods.addFriendRequest(req.body.to, req.body.from, req.body.message)
+    .then((friendRequest) => res.status(200).send(friendRequest))
+    .catch(err => {
+      debug('%O', err)
+      res.status(500).send({ message: 'Internal server error.' })
+    })
 }
 
-function update(req, res) {
+const update = (req, res) => {
+  debug('Updating friend request')
+
   if (!req.body.status)
     return res.status(422).json({ message: 'Required field(s) missing.'})
 
-  methods.getFriendRequestById(req.params.id, (err, fr) => {
-    if (err) return res.status(500).send({ message: 'Internal server error.'});
-    if (fr === null) return res.status(404).send({ message: 'Friend request not found.' });
+  methods.getFriendRequestById(req.params.id)
+    .then(friendRequest => {
+      if (friendRequest === undefined)
+	return res.status(404).send({ message: 'Friend request not found.' });
 
-    methods.updateFriendRequest(fr, req.body.status, err => {
-      if (err) return res.status(500).send({ message: 'Internal server error.'});
+      if (req.body.status === 'accept') {
+	methods.acceptFriendRequest(friendRequest, req.body.status)
+	  .catch(err => {
+	    debug('%O', err)
+	    res.status(500).send({ message: 'Internal server error.' })
+	  })
+      }
 
-      methods.deleteFriendRequest(fr, err => err
-				  ? res.status(500).send({ message: 'Internal server error.' })
-				  : res.status(200).send('OK'))
-    });
-  });
+      methods.deleteFriendRequest(friendRequest)
+	.then(() => res.sendStatus(200))
+	.catch(err => {
+	  debug('%O', err)
+	  res.status(500).send({ message: 'Internal server error.' })
+	})
+    })
+    .catch(err => {
+      debug('%O', err)
+      res.status(500).send({ message: 'Internal server error.' })
+    })
 }
 
 module.exports = {
   add: add,
   update: update
-};
+}

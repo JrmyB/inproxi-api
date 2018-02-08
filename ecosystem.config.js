@@ -29,8 +29,8 @@ module.exports = {
    */
   deploy : {
     production : {
-      user : 'jrmy',
-      host : '51.15.165.55',
+      user : 'user',
+      host : 'ip_address',
       key  : '~/.ssh/id_rsa',
       ref  : 'origin/master',
       repo : '-b master git@github.com:JrmyB/inproxi-api.git',
@@ -38,8 +38,8 @@ module.exports = {
       'post-deploy' : 'source ~/.zshrc && npm install && pm2 reload ecosystem.config.js --update-env --only inproxi-api-prod --env production --update-env'
     },
     development : {
-      user : 'jrmy',
-      host : '51.15.165.55',
+      user : 'user',
+      host : 'ip_address',
       key  : '~/.ssh/id_rsa',
       ref  : 'origin/development', 
       repo : '-b development git@github.com:JrmyB/inproxi-api.git',

@@ -5,7 +5,7 @@ var devConfig = {
     port: 3001,
     database: 'mongodb://localhost/inproxi-development',
     jwt: {
-	secret: 'pssphrs'
+	secret: 'passphrase'
     }
 };
 

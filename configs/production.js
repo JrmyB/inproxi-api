@@ -5,7 +5,7 @@ const prodConfig = {
   port: 3000,
   database: 'mongodb://localhost/inproxi-production',
   jwt: {
-    secret: 'pssphrs'
+    secret: 'passphrase'
   }
 };
 
